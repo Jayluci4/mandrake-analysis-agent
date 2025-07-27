@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
-import { Conversations, Literature, Experiments, DataSets } from './pages'
+import { Conversations, Literature, Experiments, DataSets, ConnectionTest } from './pages'
 import { ConversationProvider } from './contexts/ConversationContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { LoginScreen } from './components/auth/LoginScreen'
@@ -25,6 +25,7 @@ function AppContent() {
             <Route path="/literature" element={<Literature />} />
             <Route path="/experiments" element={<Experiments />} />
             <Route path="/datasets" element={<DataSets />} />
+            <Route path="/test" element={<ConnectionTest />} />
           </Routes>
         </div>
       </AppShell>
