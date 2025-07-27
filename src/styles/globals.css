@@ -30,6 +30,8 @@
     aside.glass {
       @apply border-r border-border-subtle;
       box-shadow: 2px 0 32px rgba(0, 212, 255, 0.1);
+      height: 100vh;
+      height: 100dvh;
     }
   }
   
@@ -134,11 +136,33 @@
     }
   }
   
-  /* Fix mobile sidebar height */
+  /* Fix mobile sidebar height and scrolling */
   @media (max-width: 1024px) {
     .h-screen {
       height: 100vh;
       height: 100dvh; /* Dynamic viewport height for mobile */
+    }
+    
+    /* Ensure sidebar scrolls properly on mobile */
+    aside.glass {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    
+    /* Enable smooth scrolling on mobile */
+    .custom-scrollbar {
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      scroll-behavior: smooth;
+    }
+    
+    /* Ensure scrollable content takes remaining space */
+    aside.glass > div:last-child {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
     }
   }
 }
