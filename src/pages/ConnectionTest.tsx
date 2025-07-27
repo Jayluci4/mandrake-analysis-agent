@@ -16,8 +16,21 @@ export function ConnectionTest() {
     setError('')
     setDebugInfo(null)
 
+    const apiUrl = import.meta.env.VITE_API_URL
+    console.log('Testing connection to:', apiUrl)
+
     try {
-      // Test health endpoint
+      // First, try a simple fetch to see what we get
+      const testUrl = `${apiUrl}/health`
+      console.log('Fetching:', testUrl)
+      
+      const rawResponse = await fetch(testUrl)
+      const rawText = await rawResponse.text()
+      console.log('Raw response status:', rawResponse.status)
+      console.log('Raw response headers:', Object.fromEntries(rawResponse.headers.entries()))
+      console.log('Raw response text (first 500 chars):', rawText.substring(0, 500))
+
+      // Now try through the API client
       const healthResponse = await apiClient.health()
       setStatus('Health check successful!')
       setDebugInfo((prev: DebugInfo | null) => ({ ...prev, health: healthResponse }))
@@ -30,6 +43,11 @@ export function ConnectionTest() {
       setStatus('Connection failed')
       setError(err.message || 'Unknown error')
       console.error('Connection test failed:', err)
+      
+      // Try to get more info
+      if (err.message.includes('Expected JSON')) {
+        setError(err.message + ' - Check console for details. The backend might not be running or the URL might be incorrect.')
+      }
     }
   }
 

@@ -16,7 +16,17 @@ export class ApiClient {
 
   async health() {
     const response = await fetch(`${this.baseUrl}/health`)
-    if (!response.ok) throw new Error('Health check failed')
+    if (!response.ok) {
+      const text = await response.text()
+      console.error('Health check failed:', response.status, text)
+      throw new Error(`Health check failed: ${response.status} ${response.statusText}`)
+    }
+    const contentType = response.headers.get('content-type')
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text()
+      console.error('Invalid content type:', contentType, 'Response:', text.substring(0, 200))
+      throw new Error(`Expected JSON but got ${contentType}`)
+    }
     return response.json()
   }
 

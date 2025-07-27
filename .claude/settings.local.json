@@ -26,7 +26,8 @@
       "Bash(sed:*)",
       "Bash(vercel:*)",
       "Bash(npm run build:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(node test-backend.js)"
     ],
     "deny": []
   }
