@@ -20,7 +20,7 @@ export function AppShell({ children }: AppShellProps) {
       )}
       
       {/* AIDEV-NOTE: Glass morphism sidebar with brand colors - now responsive */}
-      <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-50 h-full transition-transform duration-300 ease-in-out`}>
+      <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-50 h-screen lg:h-full transition-transform duration-300 ease-in-out`}>
         <NavigationSidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
       

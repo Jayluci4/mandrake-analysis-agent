@@ -25,6 +25,14 @@
     box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
   }
   
+  /* Mobile-specific glass adjustments */
+  @media (max-width: 1024px) {
+    aside.glass {
+      @apply border-r border-border-subtle;
+      box-shadow: 2px 0 32px rgba(0, 212, 255, 0.1);
+    }
+  }
+  
   .glass-hover {
     @apply hover:bg-white/[0.04] transition-colors duration-200;
   }
@@ -123,6 +131,14 @@
     }
     .text-lg {
       font-size: 1rem;
+    }
+  }
+  
+  /* Fix mobile sidebar height */
+  @media (max-width: 1024px) {
+    .h-screen {
+      height: 100vh;
+      height: 100dvh; /* Dynamic viewport height for mobile */
     }
   }
 }

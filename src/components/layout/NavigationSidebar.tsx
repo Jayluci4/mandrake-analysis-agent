@@ -57,9 +57,9 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
   }
   
   return (
-    <aside className="w-64 h-full glass border-r border-border-subtle flex flex-col">
+    <aside className="w-64 h-full glass lg:border-r border-border-subtle flex flex-col overflow-hidden">
       {/* Mobile close button */}
-      <div className="lg:hidden flex justify-end p-4 border-b border-border-subtle">
+      <div className="lg:hidden flex justify-end p-4 border-b border-border-subtle flex-shrink-0">
         <button
           onClick={onClose}
           className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
@@ -69,10 +69,12 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
       </div>
       
       {/* API Status Section */}
-      <ApiStatus />
+      <div className="flex-shrink-0">
+        <ApiStatus />
+      </div>
 
       {/* Quick Actions */}
-      <div className="p-4 border-b border-border-subtle">
+      <div className="p-4 border-b border-border-subtle flex-shrink-0">
         <button 
           onClick={handleNewResearch}
           className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 transition-colors"
@@ -83,7 +85,7 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="p-4">
+      <nav className="p-4 flex-shrink-0">
         <ul className="space-y-1">
           {navItems.map((item) => (
             <li key={item.label}>
@@ -108,7 +110,7 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
 
       {/* Conversation History - only show on conversations page */}
       {location.pathname === '/' && (
-        <div className="flex-1 border-t border-border-subtle overflow-hidden">
+        <div className="flex-1 min-h-0 border-t border-border-subtle">
           <div className="h-full overflow-y-auto custom-scrollbar">
             <ConversationHistory 
               key={refreshKey}
