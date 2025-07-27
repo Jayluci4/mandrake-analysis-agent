@@ -1,4 +1,3 @@
-import React from 'react'
 import { PaperGrid } from '../papers/PaperGrid'
 import { Paper } from '@/types'
 import { BookOpen } from 'lucide-react'

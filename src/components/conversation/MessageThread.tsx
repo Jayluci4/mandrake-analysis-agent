@@ -1,8 +1,6 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { User, Bot, AlertCircle } from 'lucide-react'
 import { Message } from './ConversationInterface'
-import { PaperGrid } from '../papers/PaperGrid'
 import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -92,8 +90,9 @@ function MessageBubble({ message }: { message: Message }) {
                   ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mb-3">{children}</ul>,
                   ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 mb-3">{children}</ol>,
                   li: ({ children }) => <li className="text-text-primary">{children}</li>,
-                  code: ({ inline, children }) => 
-                    inline ? (
+                  code: ({ children, ...props }) => {
+                    const isInline = !props.className?.includes('language-')
+                    return isInline ? (
                       <code className="bg-surface-elevated px-1.5 py-0.5 rounded text-sm text-accent-primary font-mono">
                         {children}
                       </code>
@@ -101,7 +100,8 @@ function MessageBubble({ message }: { message: Message }) {
                       <code className="block bg-surface-elevated p-3 rounded-lg text-sm font-mono overflow-x-auto">
                         {children}
                       </code>
-                    ),
+                    )
+                  },
                   blockquote: ({ children }) => (
                     <blockquote className="border-l-4 border-brand-500 pl-4 italic text-text-secondary my-3">
                       {children}

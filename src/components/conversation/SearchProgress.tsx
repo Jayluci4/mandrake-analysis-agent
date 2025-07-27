@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { Search, Database, Brain, FileText, Loader2 } from 'lucide-react'
 import { ProgressUpdate } from '@/types'

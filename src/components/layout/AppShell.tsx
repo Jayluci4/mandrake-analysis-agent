@@ -1,7 +1,6 @@
 import React from 'react'
 import { NavigationSidebar } from './NavigationSidebar'
 import { TopBar } from './TopBar'
-import { cn } from '@/lib/utils'
 
 interface AppShellProps {
   children: React.ReactNode
