@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import { apiClient } from '@/lib/api'
 
+interface DebugInfo {
+  health?: any
+  debug?: any
+}
+
 export function ConnectionTest() {
   const [status, setStatus] = useState<string>('Not tested')
   const [error, setError] = useState<string>('')
-  const [debugInfo, setDebugInfo] = useState<any>(null)
+  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null)
 
   const testConnection = async () => {
     setStatus('Testing...')
@@ -15,11 +20,11 @@ export function ConnectionTest() {
       // Test health endpoint
       const healthResponse = await apiClient.health()
       setStatus('Health check successful!')
-      setDebugInfo(prev => ({ ...prev, health: healthResponse }))
+      setDebugInfo((prev: DebugInfo | null) => ({ ...prev, health: healthResponse }))
 
       // Test debug config
       const debugResponse = await apiClient.getDebugConfig()
-      setDebugInfo(prev => ({ ...prev, debug: debugResponse }))
+      setDebugInfo((prev: DebugInfo | null) => ({ ...prev, debug: debugResponse }))
 
     } catch (err: any) {
       setStatus('Connection failed')
