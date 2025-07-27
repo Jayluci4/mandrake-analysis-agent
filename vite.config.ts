@@ -12,15 +12,17 @@ export default defineConfig({
   },
   server: {
     port: 9000,
+    // Proxy is only used for local development
+    // In production, use environment variables to point to the actual backend
     proxy: {
       '/api': {
-        target: 'http://localhost:7000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         timeout: 600000, // 10 minutes instead of default 2 minutes
       },
       '/ws': {
-        target: 'ws://localhost:7000',
+        target: 'ws://localhost:5000',
         ws: true,
         changeOrigin: true,
         timeout: 600000, // 10 minutes

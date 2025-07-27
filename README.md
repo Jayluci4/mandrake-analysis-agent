@@ -67,11 +67,24 @@ npm run preview
 
 The built files will be in the `dist` directory. You can deploy these to any static hosting service:
 
-#### Vercel
+#### Vercel (Recommended)
+
+1. **Deploy with Vercel CLI:**
 ```bash
 npm i -g vercel
 vercel
 ```
+
+2. **Deploy via GitHub Integration:**
+   - Connect your GitHub repository to Vercel
+   - Vercel will auto-deploy on every push to main
+
+3. **Environment Variables:**
+   Set these in your Vercel project settings:
+   - `VITE_API_URL` - Your backend API URL (e.g., `https://api.yourdomain.com`)
+   - `VITE_WS_URL` - Your WebSocket URL (e.g., `wss://api.yourdomain.com/ws`)
+
+4. **The project includes `vercel.json` for optimal configuration**
 
 #### Netlify
 1. Build the project
@@ -133,6 +146,7 @@ server {
 
 - `VITE_API_URL`: Backend API URL (default: `http://localhost:8000`)
 - `VITE_WS_URL`: WebSocket URL (default: `ws://localhost:8000/ws`)
+- `VITE_ACCESS_PIN`: 4-digit access PIN for authentication (default: `1234`)
 
 ## Tech Stack
 

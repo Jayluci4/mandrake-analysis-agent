@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Search, Bell, Command } from 'lucide-react'
+import { Search, Bell, Command, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function TopBar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showNotifications, setShowNotifications] = useState(false)
+  const { logout } = useAuth()
 
   // AIDEV-NOTE: Handle search functionality with keyboard shortcut
   useEffect(() => {
@@ -60,6 +62,14 @@ export function TopBar() {
           >
             <Bell className="w-5 h-5 text-text-secondary" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-accent-primary rounded-full"></span>
+          </button>
+          
+          <button 
+            onClick={logout}
+            className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
+            title="Logout"
+          >
+            <LogOut className="w-5 h-5 text-text-secondary" />
           </button>
         </div>
       </div>

@@ -3,8 +3,17 @@ import { Routes, Route } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { Conversations, Literature, Experiments, DataSets } from './pages'
 import { ConversationProvider } from './contexts/ConversationContext'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { LoginScreen } from './components/auth/LoginScreen'
 
-function App() {
+function AppContent() {
+  const { isAuthenticated, login } = useAuth()
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return <LoginScreen onSuccess={login} />
+  }
+
   // AIDEV-NOTE: Main routing configuration for the BioAgent app
   // All routes are wrapped in AppShell which provides the navigation sidebar
   // ConversationProvider allows global access to conversation control functions
@@ -21,6 +30,14 @@ function App() {
         </div>
       </AppShell>
     </ConversationProvider>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 
