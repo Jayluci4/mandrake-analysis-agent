@@ -1,4 +1,3 @@
-import React from 'react'
 import { FlaskConical, Plus, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 
 export function Experiments() {

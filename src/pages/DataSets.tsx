@@ -1,4 +1,3 @@
-import React from 'react'
 import { Database, Upload, FileText, BarChart3, Download } from 'lucide-react'
 
 export function DataSets() {

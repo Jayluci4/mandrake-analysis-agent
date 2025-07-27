@@ -1,4 +1,3 @@
-import React from 'react'
 import { BookOpen, Search, Filter, Download } from 'lucide-react'
 
 export function Literature() {

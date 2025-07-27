@@ -20,7 +20,13 @@
       "Bash(git push:*)",
       "Bash(ssh:*)",
       "Bash(git remote set-url:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(vercel:*)",
+      "Bash(npm run build:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

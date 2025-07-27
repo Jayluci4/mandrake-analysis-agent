@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { ConversationInterface, ConversationInterfaceRef } from '@/components/conversation/ConversationInterface'
 import { useConversation } from '@/contexts/ConversationContext'
 

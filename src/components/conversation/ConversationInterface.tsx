@@ -29,7 +29,7 @@ export interface ConversationInterfaceRef {
   clearConversation: () => void
 }
 
-export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>((props, ref) => {
+export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>((_, ref) => {
   const [messages, setMessages] = useState<Message[]>([])
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [streamingPapers, setStreamingPapers] = useState<Paper[]>([])
@@ -38,7 +38,7 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { setLoadConversationHandler, setCurrentConversationId } = useConversation()
   
-  const { search, isSearching, progress, result, error } = useSearch({
+  const { search, isSearching, progress } = useSearch({
     onPapersStream: (papers, phase, count) => {
       // Handle paper streaming - papers appear immediately in the right panel
       console.log(`Streaming ${count} papers (${phase} phase)`)

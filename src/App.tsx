@@ -1,4 +1,3 @@
-import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { Conversations, Literature, Experiments, DataSets } from './pages'
