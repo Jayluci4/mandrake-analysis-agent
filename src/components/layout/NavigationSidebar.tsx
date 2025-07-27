@@ -5,7 +5,8 @@ import {
   BookOpen, 
   FlaskConical, 
   Database,
-  Plus
+  Plus,
+  X
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useConversation } from '@/contexts/ConversationContext'
@@ -20,7 +21,11 @@ const navItems = [
   { icon: Database, label: 'Data Sets', href: '/datasets' },
 ]
 
-export function NavigationSidebar() {
+interface NavigationSidebarProps {
+  onClose?: () => void
+}
+
+export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
   // AIDEV-NOTE: Using React Router's NavLink for client-side navigation
   // The isActive prop automatically handles active state styling
   const navigate = useNavigate()
@@ -52,7 +57,17 @@ export function NavigationSidebar() {
   }
   
   return (
-    <aside className="w-64 glass border-r border-border-subtle flex flex-col">
+    <aside className="w-64 h-full glass border-r border-border-subtle flex flex-col">
+      {/* Mobile close button */}
+      <div className="lg:hidden flex justify-end p-4 border-b border-border-subtle">
+        <button
+          onClick={onClose}
+          className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
+        >
+          <X className="w-5 h-5 text-text-secondary" />
+        </button>
+      </div>
+      
       {/* API Status Section */}
       <ApiStatus />
 

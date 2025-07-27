@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Bot } from 'lucide-react'
+import { Bot, FileText, X } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { MessageThread } from './MessageThread'
@@ -178,13 +178,14 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
 
   // Check if we should show split layout (when there are papers)
   const shouldShowSplitLayout = allPapers.length > 0
+  const [showPapersPanel, setShowPapersPanel] = useState(false)
 
   return (
     <div className="h-full flex flex-col">
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Chat Area */}
-        <div className={`flex flex-col ${shouldShowSplitLayout ? 'w-1/2' : 'flex-1'}`}>
+        <div className={`flex flex-col ${shouldShowSplitLayout ? 'lg:w-1/2' : ''} flex-1`}>
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             <MessageThread messages={messages} />
             
@@ -227,11 +228,46 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
           </div>
         </div>
 
-        {/* Papers Panel */}
+        {/* Papers Panel - Desktop */}
         {shouldShowSplitLayout && (
-          <div className="w-1/2">
+          <div className="hidden lg:block lg:w-1/2">
             <PapersPanel papers={allPapers} isVisible={shouldShowSplitLayout} />
           </div>
+        )}
+        
+        {/* Papers Panel - Mobile Overlay */}
+        {shouldShowSplitLayout && showPapersPanel && (
+          <div className="lg:hidden fixed inset-0 z-50 bg-background-primary">
+            <div className="h-full flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b border-border-subtle">
+                <h2 className="text-lg font-semibold">Research Papers</h2>
+                <button
+                  onClick={() => setShowPapersPanel(false)}
+                  className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
+                >
+                  <X className="w-5 h-5 text-text-secondary" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <PapersPanel papers={allPapers} isVisible={true} />
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Mobile Papers Toggle Button */}
+        {shouldShowSplitLayout && (
+          <button
+            onClick={() => setShowPapersPanel(true)}
+            className="lg:hidden fixed bottom-20 right-4 p-3 bg-brand-500 rounded-full shadow-lg z-40"
+          >
+            <FileText className="w-5 h-5 text-white" />
+            {allPapers.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-accent-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {allPapers.length}
+              </span>
+            )}
+          </button>
         )}
       </div>
 

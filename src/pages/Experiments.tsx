@@ -1,8 +1,8 @@
-import { FlaskConical, Plus, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import { Plus, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 
 export function Experiments() {
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="pb-6 border-b border-border-subtle">
         <div className="flex items-center justify-between">
@@ -55,44 +55,68 @@ export function Experiments() {
       </div>
 
       {/* Experiments List */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar opacity-20 pointer-events-none">
         <div className="space-y-4">
-          {/* Sample experiment card */}
-          <div className="p-6 bg-background-secondary rounded-lg border border-border-subtle hover:border-brand-400/50 transition-colors cursor-pointer">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-1">
-                  Protein Expression Study #42
-                </h3>
-                <p className="text-sm text-text-secondary">
-                  Started 2 days ago • Est. completion in 5 days
-                </p>
+          {/* Sample experiment cards */}
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="p-6 bg-background-secondary rounded-lg border border-border-subtle">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-text-primary mb-1">
+                    Sample Experiment #{40 + i}
+                  </h3>
+                  <p className="text-sm text-text-secondary">
+                    Started {i} days ago • Est. completion in {7 - i} days
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-sm">
+                  <Clock className="w-3 h-3" />
+                  In Progress
+                </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-sm">
-                <Clock className="w-3 h-3" />
-                In Progress
-              </div>
-            </div>
-            <p className="text-text-secondary mb-4">
-              Testing the expression levels of target protein under various conditions...
-            </p>
-            <div className="flex items-center gap-6 text-sm text-text-tertiary">
-              <span>Protocol: Western Blot</span>
-              <span>Samples: 24</span>
-              <span>Progress: 35%</span>
-            </div>
-          </div>
-
-          {/* Empty state */}
-          <div className="flex-1 flex items-center justify-center p-12">
-            <div className="text-center">
-              <FlaskConical className="w-12 h-12 text-text-tertiary mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-text-primary mb-2">No experiments yet</h3>
-              <p className="text-text-secondary max-w-md">
-                Start tracking your experiments here. You can log protocols, results, and observations.
+              <p className="text-text-secondary mb-4">
+                Testing various conditions for optimal results...
               </p>
+              <div className="flex items-center gap-6 text-sm text-text-tertiary">
+                <span>Protocol: Sample Protocol</span>
+                <span>Samples: {12 * i}</span>
+                <span>Progress: {25 * i}%</span>
+              </div>
             </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Coming Soon Overlay */}
+      <div className="absolute inset-0 flex items-center justify-center bg-background-primary/80 backdrop-blur-sm">
+        <div className="text-center p-8 glass rounded-xl border border-border-subtle max-w-md">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-400/20 to-accent-primary/20 flex items-center justify-center mx-auto mb-4">
+            <Clock className="w-8 h-8 text-brand-400" />
           </div>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">
+            Coming Soon
+          </h2>
+          <p className="text-text-secondary mb-4">
+            The Experiment Tracking feature is under development. Soon you'll be able to:
+          </p>
+          <ul className="text-sm text-text-secondary space-y-2 text-left max-w-sm mx-auto">
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Design and track experiments with AI assistance</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Log protocols, observations, and results</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Generate automated lab reports</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Collaborate with team members in real-time</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

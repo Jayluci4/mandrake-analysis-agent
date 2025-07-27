@@ -1,8 +1,8 @@
-import { Database, Upload, FileText, BarChart3, Download } from 'lucide-react'
+import { Database, Upload, FileText, BarChart3, Download, Clock } from 'lucide-react'
 
 export function DataSets() {
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="pb-6 border-b border-border-subtle">
         <div className="flex items-center justify-between">
@@ -42,49 +42,73 @@ export function DataSets() {
       </div>
 
       {/* Recent Datasets */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar opacity-20 pointer-events-none">
         <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Datasets</h2>
         <div className="space-y-4">
-          {/* Sample dataset card */}
-          <div className="p-6 bg-background-secondary rounded-lg border border-border-subtle hover:border-brand-400/50 transition-colors">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-brand-500/10 rounded-lg">
-                  <Database className="w-6 h-6 text-brand-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-1">
-                    RNA-Seq Results - Experiment 42
-                  </h3>
-                  <p className="text-sm text-text-secondary mb-3">
-                    Uploaded 3 days ago • 2.4 GB • CSV format
-                  </p>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className="text-text-tertiary">24,567 rows</span>
-                    <span className="text-text-tertiary">145 columns</span>
-                    <button className="text-brand-400 hover:text-brand-300 flex items-center gap-1">
-                      <Download className="w-3 h-3" />
-                      Download
-                    </button>
+          {/* Sample dataset cards */}
+          {[1, 2].map((i) => (
+            <div key={i} className="p-6 bg-background-secondary rounded-lg border border-border-subtle">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-brand-500/10 rounded-lg">
+                    <Database className="w-6 h-6 text-brand-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-text-primary mb-1">
+                      Sample Dataset {i}
+                    </h3>
+                    <p className="text-sm text-text-secondary mb-3">
+                      Uploaded {i} days ago • {1.2 * i} GB • CSV format
+                    </p>
+                    <div className="flex items-center gap-4 text-sm">
+                      <span className="text-text-tertiary">{12000 * i} rows</span>
+                      <span className="text-text-tertiary">{50 * i} columns</span>
+                      <button className="text-brand-400 hover:text-brand-300 flex items-center gap-1">
+                        <Download className="w-3 h-3" />
+                        Download
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <button className="px-3 py-1.5 bg-background-tertiary hover:bg-background-primary border border-border-subtle rounded-lg text-sm transition-colors">
+                  Analyze
+                </button>
               </div>
-              <button className="px-3 py-1.5 bg-background-tertiary hover:bg-background-primary border border-border-subtle rounded-lg text-sm transition-colors">
-                Analyze
-              </button>
             </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Coming Soon Overlay */}
+      <div className="absolute inset-0 flex items-center justify-center bg-background-primary/80 backdrop-blur-sm">
+        <div className="text-center p-8 glass rounded-xl border border-border-subtle max-w-md">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-400/20 to-accent-primary/20 flex items-center justify-center mx-auto mb-4">
+            <Clock className="w-8 h-8 text-brand-400" />
           </div>
-
-          {/* Empty state */}
-          <div className="flex-1 flex items-center justify-center p-12">
-            <div className="text-center">
-              <Database className="w-12 h-12 text-text-tertiary mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-text-primary mb-2">No datasets uploaded</h3>
-              <p className="text-text-secondary max-w-md">
-                Upload your research data to store, manage, and analyze it with AI assistance.
-              </p>
-            </div>
-          </div>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">
+            Coming Soon
+          </h2>
+          <p className="text-text-secondary mb-4">
+            The Data Management feature is under development. Soon you'll be able to:
+          </p>
+          <ul className="text-sm text-text-secondary space-y-2 text-left max-w-sm mx-auto">
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Upload and store research datasets securely</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Analyze data with AI-powered insights</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Visualize results with interactive charts</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-400">•</span>
+              <span>Share datasets with collaborators</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

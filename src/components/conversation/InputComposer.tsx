@@ -49,13 +49,13 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-2 sm:p-4">
       <div className="glass rounded-xl border border-border-subtle">
         <div className="flex items-end gap-2 p-3">
-          {/* Attachment Button */}
+          {/* Attachment Button - Hidden on mobile */}
           <button
             onClick={handleAttachment}
-            className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors text-text-tertiary hover:text-text-secondary"
+            className="hidden sm:block p-2 rounded-lg hover:bg-white/[0.02] transition-colors text-text-tertiary hover:text-text-secondary"
             title="Attach files"
           >
             <Paperclip className="w-5 h-5" />
@@ -68,7 +68,7 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
               value={input}
               onChange={handleInput}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about any biological or medical research topic..."
+              placeholder="Ask about research..."
               disabled={disabled}
               className={cn(
                 "w-full bg-transparent text-text-primary placeholder:text-text-muted",
@@ -80,10 +80,10 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
             />
           </div>
 
-          {/* Voice Button */}
+          {/* Voice Button - Hidden on mobile */}
           <button
             onClick={handleVoiceInput}
-            className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors text-text-tertiary hover:text-text-secondary"
+            className="hidden sm:block p-2 rounded-lg hover:bg-white/[0.02] transition-colors text-text-tertiary hover:text-text-secondary"
             title="Voice input"
           >
             <Mic className="w-5 h-5" />
@@ -105,8 +105,8 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
           </button>
         </div>
 
-        {/* Tips */}
-        <div className="px-3 pb-2 flex items-center gap-4 text-xs text-text-muted">
+        {/* Tips - Hidden on mobile */}
+        <div className="hidden sm:flex px-3 pb-2 items-center gap-4 text-xs text-text-muted">
           <span>Press Enter to send, Shift+Enter for new line</span>
           <span>•</span>
           <span>Try: "latest CRISPR developments" or "COVID-19 vaccines"</span>

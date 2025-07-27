@@ -12,14 +12,14 @@ interface MessageThreadProps {
 export function MessageThread({ messages }: MessageThreadProps) {
   if (messages.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-8">
+      <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-8">
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-400/20 to-accent-primary/20 flex items-center justify-center mb-4">
           <Bot className="w-10 h-10 text-brand-400" />
         </div>
-        <h2 className="text-xl font-semibold text-text-primary mb-2">
+        <h2 className="text-lg sm:text-xl font-semibold text-text-primary mb-2">
           Welcome to BioAgent
         </h2>
-        <p className="text-text-secondary max-w-md">
+        <p className="text-sm sm:text-base text-text-secondary max-w-md">
           Your AI Co-Scientist is ready to help with biological and medical research. 
           Ask me about any research topic, and I'll search through scientific literature to provide comprehensive analysis.
         </p>
@@ -28,7 +28,7 @@ export function MessageThread({ messages }: MessageThreadProps) {
   }
 
   return (
-    <div className="space-y-4 p-3">
+    <div className="space-y-4 p-2 sm:p-3">
       {messages.map((message, index) => (
         <motion.div
           key={message.id}
@@ -70,7 +70,7 @@ function MessageBubble({ message }: { message: Message }) {
         isUser && "flex justify-end"
       )}>
         <div className={cn(
-          "rounded-lg px-3 py-2",
+          "rounded-lg px-2 sm:px-3 py-1.5 sm:py-2",
           isUser && "bg-brand-500/10 border border-brand-500/20",
           message.type === 'ai' && "glass",
           isSystem && "bg-accent-error/10 border border-accent-error/20"

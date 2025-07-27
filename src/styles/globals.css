@@ -109,4 +109,20 @@
       transform: translateY(0);
     }
   }
+  
+  /* Responsive text utilities */
+  @media (max-width: 640px) {
+    .text-xs {
+      font-size: 0.7rem;
+    }
+    .text-sm {
+      font-size: 0.8rem;
+    }
+    .text-base {
+      font-size: 0.9rem;
+    }
+    .text-lg {
+      font-size: 1rem;
+    }
+  }
 }
