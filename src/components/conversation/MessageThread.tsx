@@ -17,7 +17,7 @@ export function MessageThread({ messages }: MessageThreadProps) {
           <Bot className="w-10 h-10 text-brand-400" />
         </div>
         <h2 className="text-lg sm:text-xl font-semibold text-text-primary mb-2">
-          Welcome to BioAgent
+          Ready to Research
         </h2>
         <p className="text-sm sm:text-base text-text-secondary max-w-md">
           Your AI Co-Scientist is ready to help with biological and medical research. 

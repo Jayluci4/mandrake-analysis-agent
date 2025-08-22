@@ -92,7 +92,10 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
   })
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Only scroll if there are messages (don't auto-scroll on empty state)
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   useEffect(() => {

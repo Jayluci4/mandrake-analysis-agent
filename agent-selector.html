@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biomni Agent Selector - Choose Your AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .agent-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .agent-card.research::before {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+
+        .agent-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 40px;
+        }
+
+        .analysis .agent-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .research .agent-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .agent-card h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            color: #1a202c;
+        }
+
+        .agent-card .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .features li {
+            padding: 10px 0;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li::before {
+            content: '✓';
+            margin-right: 10px;
+            color: #48bb78;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .launch-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .analysis .launch-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .analysis .launch-btn:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            transform: scale(1.02);
+        }
+
+        .research .launch-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .research .launch-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: scale(1.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .agents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #48bb78;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to MandrakeBio Web Research Tool</h1>
+            <p>Please select between Research Agent and Analysis Agent to continue</p>
+        </div>
+
+        <div class="agents-grid">
+            <!-- Analysis Agent Card -->
+            <div class="agent-card analysis" onclick="launchAnalysisAgent()">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span style="color: #48bb78; font-size: 0.8rem;">Available</span>
+                </div>
+                <div class="agent-icon">
+                    <span style="color: white;">🧠</span>
+                </div>
+                <h2>Analysis Agent</h2>
+                <p class="subtitle">General Biomedical AI Tasks</p>
+                <ul class="features">
+                    <li>Protocol execution & workflow automation</li>
+                    <li>Multi-tool orchestration</li>
+                    <li>Image generation & visualization</li>
+                    <li>Dual rendering (JSON/Markdown)</li>
+                    <li>Complex data analysis</li>
+                </ul>
+                <button class="launch-btn">Select Analysis Agent</button>
+                <center><span class="badge">Port: 5175</span></center>
+            </div>
+
+            <!-- Research Agent Card -->
+            <div class="agent-card research" onclick="launchResearchAgent()">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span style="color: #48bb78; font-size: 0.8rem;">Available</span>
+                </div>
+                <div class="agent-icon">
+                    <span style="color: white;">🔍</span>
+                </div>
+                <h2>Research Agent</h2>
+                <p class="subtitle">Literature Search & Discovery</p>
+                <ul class="features">
+                    <li>Real-time paper search</li>
+                    <li>WebSocket streaming results</li>
+                    <li>Conversation history</li>
+                    <li>Beautiful paper display</li>
+                    <li>Smart literature analysis</li>
+                </ul>
+                <button class="launch-btn">Select Research Agent</button>
+                <center><span class="badge">Port: 9001 | PIN: 9898</span></center>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💡 Tip: You can switch between agents at any time using the navigation buttons within each app</p>
+        </div>
+    </div>
+
+    <script>
+        function launchAnalysisAgent() {
+            console.log('Launching Analysis Agent...');
+            window.location.href = 'http://localhost:5175';
+        }
+
+        function launchResearchAgent() {
+            console.log('Launching Research Agent...');
+            window.location.href = 'http://localhost:9001';
+        }
+
+        // Check if agents are running
+        async function checkAgentStatus() {
+            try {
+                // Check Analysis Agent
+                fetch('http://localhost:5175')
+                    .catch(() => {
+                        document.querySelectorAll('.analysis .status-dot')[0].style.background = '#f56565';
+                        document.querySelectorAll('.analysis .status-indicator span')[1].textContent = 'Offline';
+                        document.querySelectorAll('.analysis .status-indicator span')[1].style.color = '#f56565';
+                    });
+
+                // Check Research Agent
+                fetch('http://localhost:9001')
+                    .catch(() => {
+                        document.querySelectorAll('.research .status-dot')[0].style.background = '#f56565';
+                        document.querySelectorAll('.research .status-indicator span')[1].textContent = 'Offline';
+                        document.querySelectorAll('.research .status-indicator span')[1].style.color = '#f56565';
+                    });
+            } catch (error) {
+                console.error('Error checking agent status:', error);
+            }
+        }
+
+        // Check status on load
+        window.addEventListener('load', checkAgentStatus);
+    </script>
+</body>
+</html>

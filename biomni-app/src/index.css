@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    height: 100%;
+  }
+  
+  body {
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    @apply antialiased;
+    height: 100%;
+    margin: 0;
+  }
+  
+  #root {
+    height: 100vh;
+    width: 100vw;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+  
+  /* Stream event animations */
+  .stream-event {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .stream-event-enter {
+    @apply opacity-0 translate-y-2;
+  }
+  
+  .stream-event-enter-active {
+    @apply opacity-100 translate-y-0;
+  }
+  
+  /* Code syntax highlighting custom styles */
+  .code-block {
+    @apply bg-gray-900 dark:bg-gray-800 rounded-lg overflow-hidden;
+  }
+  
+  .code-block pre {
+    @apply m-0 p-4 overflow-x-auto custom-scrollbar;
+  }
+  
+  /* Todo list animations */
+  .todo-item {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .todo-completed {
+    @apply opacity-75 scale-98;
+  }
+  
+  /* File upload zone */
+  .upload-zone {
+    @apply border-2 border-dashed border-gray-300 dark:border-gray-600;
+    @apply rounded-lg p-8 text-center cursor-pointer;
+    @apply transition-colors duration-200;
+  }
+  
+  .upload-zone.dragover {
+    @apply border-biomni-500 bg-biomni-50 dark:bg-biomni-900/20;
+  }
+  
+  /* Visualization panel */
+  .viz-panel {
+    @apply bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700;
+    @apply shadow-sm;
+  }
+  
+  /* Chat message bubbles */
+  .message-user {
+    @apply bg-biomni-500 text-white rounded-lg px-4 py-2 max-w-3xl ml-auto;
+  }
+  
+  .message-assistant {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+    @apply rounded-lg px-4 py-2 max-w-3xl;
+  }
+  
+  /* Button variants */
+  .btn-primary {
+    @apply bg-biomni-500 hover:bg-biomni-600 text-white;
+    @apply px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600;
+    @apply text-gray-900 dark:text-gray-100;
+    @apply px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-ghost {
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800;
+    @apply text-gray-700 dark:text-gray-300;
+    @apply px-4 py-2 rounded-lg transition-colors duration-200;
+    @apply font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animation-delay-75 {
+    animation-delay: 75ms;
+  }
+  
+  .animation-delay-150 {
+    animation-delay: 150ms;
+  }
+  
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+}
+
+/* Dark mode specific adjustments */
+.dark {
+  color-scheme: dark;
+}
+
+/* Plotly chart container adjustments */
+.plotly-container {
+  @apply w-full h-full;
+}
+
+.plotly-container .plotly {
+  @apply rounded-lg;
+}
+
+/* Monaco editor theming */
+.monaco-editor {
+  @apply rounded-lg;
+}
+
+/* React syntax highlighter theming */
+.react-syntax-highlighter {
+  @apply rounded-lg !important;
+  @apply m-0 !important;
+}

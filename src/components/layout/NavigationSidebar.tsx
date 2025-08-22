@@ -6,7 +6,9 @@ import {
   FlaskConical, 
   Database,
   Plus,
-  X
+  X,
+  Brain,
+  Search
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useConversation } from '@/contexts/ConversationContext'
@@ -75,15 +77,44 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
           <ApiStatus />
         </div>
 
-        {/* Quick Actions */}
+        {/* Agent Switcher */}
         <div className="p-4 border-b border-border-subtle lg:flex-shrink-0">
-          <button 
-            onClick={handleNewResearch}
-            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="text-sm font-medium">New Research</span>
-          </button>
+          <div className="space-y-2">
+            {/* Analysis Agent (Biomni) Button */}
+            <button 
+              onClick={() => {
+                // Open Biomni app in same tab/window
+                // Note: Update port if Biomni runs on different port
+                window.location.href = 'http://localhost:5174'
+              }}
+              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
+              title="Switch to Biomni Analysis Agent for general biomedical AI tasks"
+            >
+              <Brain className="w-4 h-4" />
+              <span className="text-sm font-medium">Analysis Agent</span>
+            </button>
+            
+            {/* Research Agent (Current BioAgent) Button */}
+            <button 
+              onClick={handleNewResearch}
+              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-blue-500/25 relative ring-2 ring-blue-400 ring-opacity-50"
+              title="New Research Session (Currently Active)"
+            >
+              <Search className="w-4 h-4" />
+              <span className="text-sm font-medium">Research Agent</span>
+              {/* Active indicator */}
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+            </button>
+          </div>
+          
+          {/* Small description text */}
+          <div className="mt-3 text-xs text-text-tertiary text-center space-y-1">
+            <p className="font-medium">Research Agent Active</p>
+            <p className="opacity-75">Click to start new session</p>
+          </div>
         </div>
 
         {/* Navigation */}
