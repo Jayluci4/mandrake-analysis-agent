@@ -58,6 +58,7 @@ interface ExecutionEvent {
   tool_name?: string
   step_number?: number
   total_steps?: number
+  images?: string[]
 }
 
 export default function AnalysisAgent() {

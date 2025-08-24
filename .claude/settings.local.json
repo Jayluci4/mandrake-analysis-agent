@@ -28,8 +28,13 @@
       "Bash(npm run build:*)",
       "Bash(git checkout:*)",
       "Bash(node test-backend.js)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm:*)",
+      "Bash(git rm:*)"
     ],
-    "deny": []
+    "deny": [],
+    "additionalDirectories": [
+      "C:\\Users\\tanay\\.ssh"
+    ]
   }
 }
