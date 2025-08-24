@@ -11,7 +11,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 9000,
+    port: 3000,
+    strictPort: false,
     // Proxy is only used for local development
     // In production, use environment variables to point to the actual backend
     proxy: {

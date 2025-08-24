@@ -644,7 +644,7 @@ const AppBiomniUltra: React.FC = () => {
             </div>
             <div>
               <h1 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Biomni Analysis Agent 
+                MandrakeBio Analysis Agent 
                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
                   Active
                 </span>

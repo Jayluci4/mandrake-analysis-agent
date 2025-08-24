@@ -103,6 +103,9 @@ export default {
         'glow': '0 0 20px rgba(0, 212, 255, 0.1)',
         'glow-lg': '0 0 40px rgba(0, 212, 255, 0.15)',
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [],

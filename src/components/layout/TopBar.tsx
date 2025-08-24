@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Search, Bell, Command, LogOut, Menu } from 'lucide-react'
+import { Search, Bell, Command, LogOut, Menu, Home } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 interface TopBarProps {
   onMenuClick?: () => void
@@ -10,6 +11,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [showNotifications, setShowNotifications] = useState(false)
   const { logout } = useAuth()
+  const navigate = useNavigate()
 
   // AIDEV-NOTE: Handle search functionality with keyboard shortcut
   useEffect(() => {
@@ -35,14 +37,14 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     alert('Notifications feature coming soon! You will receive updates about research progress and new publications.')
   }
   return (
-    <header className="h-16 glass border-b border-border-subtle flex items-center justify-between px-3 md:px-6">
+    <header className="h-16 bg-black/30 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-3 md:px-6">
       <div className="flex items-center gap-2 md:gap-4 flex-1">
         {/* Mobile menu button */}
         <button
           onClick={onMenuClick}
           className="lg:hidden p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
         >
-          <Menu className="w-5 h-5 text-text-secondary" />
+          <Menu className="w-5 h-5 text-gray-400" />
         </button>
         
         {/* Search Bar */}
@@ -55,9 +57,9 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search..."
-              className="w-full pl-10 pr-4 py-2 bg-background-elevated/50 border border-border-subtle rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-gray-400 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 text-xs text-text-tertiary">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 text-xs text-gray-500">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
@@ -68,19 +70,27 @@ export function TopBar({ onMenuClick }: TopBarProps) {
         <div className="flex items-center gap-2 md:gap-3">
           <button 
             onClick={handleNotificationClick}
-            className="relative p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
+            className="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
             title="Notifications"
           >
-            <Bell className="w-5 h-5 text-text-secondary" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-accent-primary rounded-full"></span>
+            <Bell className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-400 rounded-full"></span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/')}
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            title="Home"
+          >
+            <Home className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
           </button>
           
           <button 
             onClick={logout}
-            className="p-2 rounded-lg hover:bg-white/[0.02] transition-colors"
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
             title="Logout"
           >
-            <LogOut className="w-5 h-5 text-text-secondary" />
+            <LogOut className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
           </button>
         </div>
       </div>

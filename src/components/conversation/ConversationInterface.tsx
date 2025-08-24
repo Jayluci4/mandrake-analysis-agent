@@ -205,7 +205,7 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="glass rounded-lg p-3"
+                  className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-3"
                 >
                   <div className="flex gap-2">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-secondary to-accent-primary flex items-center justify-center flex-shrink-0">
@@ -218,8 +218,8 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
                         </ReactMarkdown>
                       </div>
                       <div className="mt-2 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-brand-400 rounded-full animate-pulse" />
-                        <span className="text-xs text-text-tertiary">Analyzing research...</span>
+                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-gray-400">Analyzing research...</span>
                       </div>
                     </div>
                   </div>
@@ -262,7 +262,7 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
         {shouldShowSplitLayout && (
           <button
             onClick={() => setShowPapersPanel(true)}
-            className="lg:hidden fixed bottom-20 right-4 p-3 bg-brand-500 rounded-full shadow-lg z-40"
+            className="lg:hidden fixed bottom-20 right-4 p-3 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-full shadow-lg shadow-cyan-500/25 z-40"
           >
             <FileText className="w-5 h-5 text-white" />
             {allPapers.length > 0 && (
@@ -275,7 +275,7 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
       </div>
 
       {/* Input Composer */}
-      <div className="border-t border-border-subtle">
+      <div className="border-t border-white/10">
         <InputComposer 
           onSend={handleSendMessage} 
           disabled={isSearching}

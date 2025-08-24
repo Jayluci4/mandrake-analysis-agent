@@ -5,7 +5,6 @@ import {
   BookOpen, 
   FlaskConical, 
   Database,
-  Plus,
   X,
   Brain,
   Search
@@ -15,6 +14,7 @@ import { useConversation } from '@/contexts/ConversationContext'
 import { ConversationHistory } from '@/components/conversation/ConversationHistory'
 import { SavedConversation } from '@/lib/conversationStorage'
 import { ApiStatus } from './ApiStatus'
+import toast from 'react-hot-toast'
 
 const navItems = [
   { icon: MessageSquare, label: 'Conversations', href: '/' },
@@ -46,6 +46,7 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
       clearConversation()
       // Force refresh of conversation history
       setRefreshKey(prev => prev + 1)
+      toast.success('New research started', { icon: '🔬' })
     }, 0)
   }
 
@@ -55,11 +56,14 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
       navigate('/')
     }
     // Load the conversation after navigation
-    setTimeout(() => loadConversation(conversation), 0)
+    setTimeout(() => {
+      loadConversation(conversation)
+      toast.success('Conversation loaded', { icon: '📂' })
+    }, 0)
   }
   
   return (
-    <aside className="w-64 h-full glass lg:border-r border-border-subtle flex flex-col lg:overflow-visible">
+    <aside className="w-64 h-full bg-black/30 backdrop-blur-md lg:border-r border-white/10 flex flex-col lg:overflow-visible">
       {/* Mobile close button - Fixed at top */}
       <div className="lg:hidden flex justify-end p-4 border-b border-border-subtle flex-shrink-0 sticky top-0 bg-background-primary z-10">
         <button
@@ -77,43 +81,17 @@ export function NavigationSidebar({ onClose }: NavigationSidebarProps) {
           <ApiStatus />
         </div>
 
-        {/* Agent Switcher */}
+        {/* New Research Button */}
         <div className="p-4 border-b border-border-subtle lg:flex-shrink-0">
           <div className="space-y-2">
-            {/* Analysis Agent (Biomni) Button */}
-            <button 
-              onClick={() => {
-                // Open Biomni app in same tab/window
-                // Note: Update port if Biomni runs on different port
-                window.location.href = 'http://localhost:5174'
-              }}
-              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
-              title="Switch to Biomni Analysis Agent for general biomedical AI tasks"
-            >
-              <Brain className="w-4 h-4" />
-              <span className="text-sm font-medium">Analysis Agent</span>
-            </button>
-            
-            {/* Research Agent (Current BioAgent) Button */}
             <button 
               onClick={handleNewResearch}
-              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-blue-500/25 relative ring-2 ring-blue-400 ring-opacity-50"
-              title="New Research Session (Currently Active)"
+              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-blue-500/25"
+              title="Start a New Research Session"
             >
               <Search className="w-4 h-4" />
-              <span className="text-sm font-medium">Research Agent</span>
-              {/* Active indicator */}
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-              </span>
+              <span className="text-sm font-medium">New Research</span>
             </button>
-          </div>
-          
-          {/* Small description text */}
-          <div className="mt-3 text-xs text-text-tertiary text-center space-y-1">
-            <p className="font-medium">Research Agent Active</p>
-            <p className="opacity-75">Click to start new session</p>
           </div>
         </div>
 

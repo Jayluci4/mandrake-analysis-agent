@@ -50,12 +50,12 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
 
   return (
     <div className="p-2 sm:p-4">
-      <div className="glass rounded-xl border border-border-subtle">
+      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10">
         <div className="flex items-end gap-2 p-3">
           {/* Attachment Button - Hidden on mobile */}
           <button
             onClick={handleAttachment}
-            className="hidden sm:block p-2 rounded-lg hover:bg-white/[0.02] transition-colors text-text-tertiary hover:text-text-secondary"
+            className="hidden sm:block p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
             title="Attach files"
           >
             <Paperclip className="w-5 h-5" />
@@ -71,7 +71,7 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
               placeholder="Ask about research..."
               disabled={disabled}
               className={cn(
-                "w-full bg-transparent text-text-primary placeholder:text-text-muted",
+                "w-full bg-transparent text-white placeholder:text-gray-500",
                 "resize-none outline-none",
                 "min-h-[24px] max-h-[200px]",
                 disabled && "opacity-50 cursor-not-allowed"
@@ -83,7 +83,7 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
           {/* Voice Button - Hidden on mobile */}
           <button
             onClick={handleVoiceInput}
-            className="hidden sm:block p-2 rounded-lg hover:bg-white/[0.02] transition-colors text-text-tertiary hover:text-text-secondary"
+            className="hidden sm:block p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
             title="Voice input"
           >
             <Mic className="w-5 h-5" />
@@ -96,8 +96,8 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
             className={cn(
               "p-2 rounded-lg transition-all",
               input.trim() && !disabled
-                ? "bg-brand-500 hover:bg-brand-600 text-white"
-                : "bg-surface-elevated text-text-muted cursor-not-allowed"
+                ? "bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white shadow-lg shadow-cyan-500/25"
+                : "bg-gray-800/50 text-gray-500 cursor-not-allowed"
             )}
             title="Send message"
           >
@@ -106,7 +106,7 @@ export function InputComposer({ onSend, disabled }: InputComposerProps) {
         </div>
 
         {/* Tips - Hidden on mobile */}
-        <div className="hidden sm:flex px-3 pb-2 items-center gap-4 text-xs text-text-muted">
+        <div className="hidden sm:flex px-3 pb-2 items-center gap-4 text-xs text-gray-500">
           <span>Press Enter to send, Shift+Enter for new line</span>
           <span>•</span>
           <span>Try: "latest CRISPR developments" or "COVID-19 vaccines"</span>
