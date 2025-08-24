@@ -106,14 +106,11 @@ export function Welcome() {
         <div className="max-w-7xl mx-auto px-6 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="relative">
-                <div className="absolute inset-0 bg-cyan-400/20 blur-xl rounded-full" />
-                <img
-                  src="/assets/asset-logo.png"
-                  alt="Mandrake Bioworks"
-                  className="relative w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(0,212,255,0.3)]"
-                />
-              </div>
+              <img
+                src="/assets/asset-logo.png"
+                alt="Mandrake Bioworks"
+                className="w-20 h-20 object-contain"
+              />
             </div>
             {user && (
               <div className="flex items-center gap-4">
