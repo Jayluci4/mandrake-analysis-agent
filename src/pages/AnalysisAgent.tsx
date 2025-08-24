@@ -18,6 +18,7 @@ import { useConversationAutoSave } from '../hooks/useAutoSave'
 import { CodeBlock, InlineCode } from '../components/CodeBlock'
 import { sseParser } from '../services/intelligentSSEParser'
 import { ImageDisplay } from '../components/ImageDisplay'
+import { API_URLS } from '../config/api'
 import { generateMultiplePlots } from '../services/mockImageGenerator'
 
 // Types
@@ -211,7 +212,7 @@ export default function AnalysisAgent() {
     })
 
     try {
-      const eventSource = new EventSource(`http://localhost:8003/api/chat/intelligent?${params}`)
+      const eventSource = new EventSource(`${API_URLS.ANALYSIS_AGENT}/api/chat/intelligent?${params}`)
       eventSourceRef.current = eventSource
       
       updateStatusStep(1, 'completed')

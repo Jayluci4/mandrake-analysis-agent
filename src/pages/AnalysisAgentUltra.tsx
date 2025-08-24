@@ -15,6 +15,7 @@ import remarkGfm from 'remark-gfm'
 import toast from 'react-hot-toast'
 import { generateMultiplePlots } from '../services/mockImageGenerator'
 import { ImageDisplay } from '../components/ImageDisplay'
+import { API_URLS } from '../config/api'
 
 // Types
 interface Message {
@@ -223,7 +224,7 @@ const AnalysisAgentUltra: React.FC = () => {
 
     try {
       // Connect to SSE endpoint
-      const url = `http://localhost:8003/api/chat/intelligent?message=${encodeURIComponent(userMessage.content)}&session_id=${sessionId}`
+      const url = `${API_URLS.ANALYSIS_AGENT}/api/chat/intelligent?message=${encodeURIComponent(userMessage.content)}&session_id=${sessionId}`
       console.log('Connecting to SSE endpoint:', url)
       
       const eventSource = new EventSource(url)
