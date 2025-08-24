@@ -59,12 +59,13 @@ export function useIntelligentSSE() {
         if (event.displaySide === 'left' || event.displaySide === 'both') {
           // Add to messages for left panel
           if (event.type === 'final_answer' && event.metadata && 'solution' in event.metadata) {
+            const solutionText = String(event.metadata.solution)
             const finalMessage: ProcessedMessage = {
               id: `msg-${Date.now()}`,
               role: 'assistant',
-              content: '## 📋 **EXPERIMENTAL PROTOCOL**\n\n' + event.metadata.solution,
+              content: '## 📋 **EXPERIMENTAL PROTOCOL**\n\n' + solutionText,
               timestamp: event.timestamp,
-              solution: event.metadata.solution
+              solution: solutionText
             }
             setMessages(prev => [...prev, finalMessage])
           }
