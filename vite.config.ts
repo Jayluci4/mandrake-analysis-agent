@@ -17,15 +17,17 @@ export default defineConfig({
     // In production, use environment variables to point to the actual backend
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://web-production-40da3.up.railway.app',
         changeOrigin: true,
+        secure: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         timeout: 600000, // 10 minutes instead of default 2 minutes
       },
       '/ws': {
-        target: 'ws://localhost:5000',
+        target: 'wss://web-production-40da3.up.railway.app',
         ws: true,
         changeOrigin: true,
+        secure: true,
         timeout: 600000, // 10 minutes
       },
     },

@@ -30,7 +30,8 @@
       "Bash(node test-backend.js)",
       "Bash(git commit:*)",
       "Bash(npm:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(start http://localhost:3000)"
     ],
     "deny": [],
     "additionalDirectories": [

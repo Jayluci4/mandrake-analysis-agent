@@ -1,8 +1,12 @@
 // AIDEV-NOTE: API integration following the backend specification from frontendguide.md
 
 import { SearchRequest, TaskStatus, WebSocketMessage } from '@/types'
+import { API_URLS } from '@/config/api'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+// Use Research Agent API for the main API client (for literature search)
+// In development, use /api proxy. In production, use the actual URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? '/api' : API_URLS.RESEARCH_AGENT)
 const WS_BASE_URL = import.meta.env.VITE_WS_URL || 
   (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + 
   window.location.host + '/ws'
