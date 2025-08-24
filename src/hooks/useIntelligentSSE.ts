@@ -58,14 +58,12 @@ export function useIntelligentSSE() {
         // Handle events based on display side
         if (event.displaySide === 'left' || event.displaySide === 'both') {
           // Add to messages for left panel
-          if (event.type === 'final_answer' && event.metadata && 'solution' in event.metadata) {
-            const solutionText = String(event.metadata.solution)
+          if (event.type === 'final_answer') {
             const finalMessage: ProcessedMessage = {
               id: `msg-${Date.now()}`,
               role: 'assistant',
-              content: '## 📋 **EXPERIMENTAL PROTOCOL**\n\n' + solutionText,
-              timestamp: event.timestamp,
-              solution: solutionText
+              content: '## 📋 **EXPERIMENTAL PROTOCOL**\n\n' + event.content,
+              timestamp: event.timestamp
             }
             setMessages(prev => [...prev, finalMessage])
           }
