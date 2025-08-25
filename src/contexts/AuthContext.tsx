@@ -1,83 +1,182 @@
-// AIDEV-NOTE: Updated AuthContext with Google OAuth user data support
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+// AIDEV-NOTE: AuthContext integrated with Supabase for authentication
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react'
+import { supabase } from '../lib/supabase'
+import { Session } from '@supabase/supabase-js'
+import toast from 'react-hot-toast'
 
 interface User {
   email: string
   name: string
   picture: string
   id: string
-  token?: string
-  loginTime?: string
+  google_id?: string
 }
 
 interface AuthContextType {
   isAuthenticated: boolean
   user: User | null
-  login: (userData: User) => void
-  logout: () => void
+  session: Session | null
+  loading: boolean
+  login: () => Promise<void>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
-  login: () => {},
-  logout: () => {}
+  session: null,
+  loading: true,
+  login: async () => {},
+  logout: async () => {}
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState<User | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
+  const [loading, setLoading] = useState(true)
+  const loadingRef = useRef(true)
+
+  // Fetch user profile from database
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+      
+      if (error) throw error
+      return data as User
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+      // If profile doesn't exist, create one from session data
+      return null
+    }
+  }
 
   useEffect(() => {
-    // Check if user is already authenticated
-    const authenticated = localStorage.getItem('bioagent_authenticated') === 'true'
-    const userData = localStorage.getItem('bioagent_user')
-    
-    if (authenticated && userData) {
-      try {
-        const parsedUser = JSON.parse(userData)
-        setUser(parsedUser)
-        setIsAuthenticated(true)
-        
-        // Check session expiry (24 hours)
-        if (parsedUser.loginTime) {
-          const loginTime = new Date(parsedUser.loginTime)
-          const now = new Date()
-          const hoursSinceLogin = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60)
-          
-          if (hoursSinceLogin > 24) {
-            // Session expired
-            logout()
-          }
-        }
-      } catch (error) {
-        console.error('Error parsing user data:', error)
-        logout()
+    // Absolute failsafe - set loading to false after 6 seconds no matter what
+    const failsafeTimeout = setTimeout(() => {
+      if (loadingRef.current) {
+        setLoading(false)
+        loadingRef.current = false
       }
-    } else {
-      setIsAuthenticated(authenticated)
+    }, 6000)
+    
+    // Get the session from Supabase with a race condition against timeout
+    const sessionPromise = supabase.auth.getSession()
+    const timeoutPromise = new Promise((resolve) => 
+      setTimeout(() => resolve({ data: { session: null }, error: new Error('Timeout') }), 5000)
+    )
+    
+    Promise.race([sessionPromise, timeoutPromise])
+      .then((result: any) => {
+        clearTimeout(failsafeTimeout)
+        const { data, error } = result
+        
+        if (data?.session) {
+          const session = data.session
+          setSession(session)
+          const userData: User = {
+            id: session.user.id,
+            email: session.user.email!,
+            name: session.user.user_metadata.full_name || session.user.email!,
+            picture: session.user.user_metadata.avatar_url || session.user.user_metadata.picture,
+            google_id: session.user.user_metadata.provider_id
+          }
+          setUser(userData)
+        }
+        
+        // ALWAYS set loading to false after checking session
+        setLoading(false)
+        loadingRef.current = false
+      })
+      .catch((error) => {
+        clearTimeout(failsafeTimeout)
+        console.error('Session check failed:', error)
+        setLoading(false)
+        loadingRef.current = false
+      })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      
+      if (event === 'SIGNED_IN' && session) {
+        setSession(session)
+        const userData: User = {
+          id: session.user.id,
+          email: session.user.email!,
+          name: session.user.user_metadata.full_name || session.user.email!,
+          picture: session.user.user_metadata.avatar_url || session.user.user_metadata.picture,
+          google_id: session.user.user_metadata.provider_id
+        }
+        setUser(userData)
+        toast.success(`Welcome, ${userData.name}!`)
+      } else if (event === 'SIGNED_OUT') {
+        setSession(null)
+        setUser(null)
+        toast.success('Signed out successfully')
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        setSession(session)
+      }
+    })
+
+    return () => {
+      clearTimeout(failsafeTimeout)
+      subscription.unsubscribe()
     }
   }, [])
 
-  const login = (userData: User) => {
-    setUser(userData)
-    setIsAuthenticated(true)
-    localStorage.setItem('bioagent_authenticated', 'true')
-    localStorage.setItem('bioagent_user', JSON.stringify(userData))
+  const login = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
+      })
+      
+      if (error) throw error
+    } catch (error: any) {
+      console.error('Error signing in:', error)
+      toast.error(error.message || 'Failed to sign in')
+    }
   }
 
-  const logout = () => {
-    setUser(null)
-    setIsAuthenticated(false)
-    localStorage.removeItem('bioagent_authenticated')
-    localStorage.removeItem('bioagent_user')
-    
-    // Clear any other session data
-    sessionStorage.clear()
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      
+      setUser(null)
+      setSession(null)
+      
+      // Clear legacy localStorage
+      localStorage.removeItem('bioagent_authenticated')
+      localStorage.removeItem('bioagent_user')
+      sessionStorage.clear()
+      
+      // Force reload to clear any cached state
+      window.location.href = '/'
+    } catch (error: any) {
+      console.error('Error signing out:', error)
+      toast.error(error.message || 'Failed to sign out')
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ 
+      isAuthenticated: !!session,
+      user, 
+      session,
+      loading,
+      login, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   )
