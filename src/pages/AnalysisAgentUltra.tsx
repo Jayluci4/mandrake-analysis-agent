@@ -273,7 +273,7 @@ const AnalysisAgentUltra: React.FC = () => {
               // AIDEV-NOTE: Handle model info event from backend showing which model is actually being used
               setActiveModel(data.model)
               if (data.model !== data.requested && data.requested !== 'auto') {
-                toast.warning(`Using ${data.model} (${data.requested} unavailable)`, { icon: '⚠️' })
+                toast(`Using ${data.model} (${data.requested} unavailable)`, { icon: '⚠️' })
               }
               setExecutionEvents(prev => [...prev, {
                 type: 'model_info',
