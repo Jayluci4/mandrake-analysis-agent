@@ -1,13 +1,11 @@
-// AIDEV-NOTE: Unified app with Google OAuth and routing for both agents
+// AIDEV-NOTE: Unified app with Supabase authentication and routing for both agents
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { GoogleOAuthProvider } from '@react-oauth/google'
 import { Toaster } from 'react-hot-toast'
 import { AppShell } from './components/layout/AppShell'
 import { Conversations, Literature, Experiments, DataSets, ConnectionTest, Welcome } from './pages'
 import { ConversationProvider } from './contexts/ConversationContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { LoginScreen } from './components/auth/LoginScreen'
-import { GOOGLE_CLIENT_ID } from './config/auth'
 import { lazy, Suspense } from 'react'
 
 // Lazy load the Analysis Agent component
@@ -25,11 +23,16 @@ const LoadingFallback = () => (
 )
 
 function AppContent() {
-  const { isAuthenticated, login } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
+
+  // Show loading spinner while checking auth state
+  if (loading) {
+    return <LoadingFallback />
+  }
 
   // Show login screen if not authenticated
   if (!isAuthenticated) {
-    return <LoginScreen onSuccess={login} />
+    return <LoginScreen />
   }
 
   // AIDEV-NOTE: Unified routing for both Analysis and Research agents
@@ -78,10 +81,9 @@ function AppContent() {
 }
 
 function App() {
-  // AIDEV-NOTE: GoogleOAuthProvider wraps the entire app for authentication
+  // AIDEV-NOTE: App with Supabase authentication
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <AuthProvider>
+    <AuthProvider>
         <Toaster 
           position="top-right"
           toastOptions={{
@@ -118,7 +120,6 @@ function App() {
         />
         <AppContent />
       </AuthProvider>
-    </GoogleOAuthProvider>
   )
 }
 

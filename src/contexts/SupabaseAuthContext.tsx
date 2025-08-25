@@ -54,6 +54,12 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
 
   // Set up auth state listener
   useEffect(() => {
+    // Clean up URL after OAuth redirect
+    if (window.location.hash && window.location.hash.includes('access_token')) {
+      // Remove tokens from URL for security and cleanliness
+      window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    }
+    
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)

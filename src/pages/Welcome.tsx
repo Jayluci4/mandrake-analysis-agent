@@ -2,28 +2,18 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Brain, FlaskConical, ArrowRight, Sparkles, Microscope, Dna, LogOut, ChevronRight, Beaker, Activity } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import toast from 'react-hot-toast'
 
 export function Welcome() {
   const navigate = useNavigate()
-  const { logout } = useAuth()
-  const [user, setUser] = useState<any>(null)
+  const { user, logout } = useAuth()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
-  useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem('bioagent_user')
-    if (userData) {
-      setUser(JSON.parse(userData))
-    }
-  }, [])
-
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     toast.success('Logged out successfully')
-    window.location.reload()
   }
   
   const handleAgentSelect = (path: string, agentName: string) => {

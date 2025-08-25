@@ -5,23 +5,23 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
-console.log('Supabase URL:', supabaseUrl)
-console.log('Supabase Anon Key:', supabaseAnonKey ? 'Found' : 'Missing')
-
+// Remove console logs for production
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase credentials not found. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file')
+  console.error('Supabase credentials not found. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file')
+  throw new Error('Supabase credentials not found')
 }
 
-// Create Supabase client
+// Create Supabase client with default settings
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true,
-    storage: window.localStorage,
-    storageKey: 'bioagent-auth-token',
+    detectSessionInUrl: true
+    // Let Supabase use its default storage configuration
   }
 })
+
+// AIDEV-NOTE: Supabase client initialized with default auth settings for proper session persistence
 
 // Database types
 export interface User {
