@@ -1,4 +1,4 @@
-// AIDEV-NOTE: Google OAuth configuration for unified Biomni app
+// AIDEV-NOTE: Google OAuth configuration for unified app
 // Google Client ID from environment variable
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 

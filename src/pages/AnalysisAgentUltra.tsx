@@ -1,4 +1,4 @@
-// AIDEV-NOTE: New AnalysisAgent based on AppBiomniUltra.tsx with glass morphism design
+// AIDEV-NOTE: AnalysisAgent with glass morphism design
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { 
@@ -70,6 +70,8 @@ const AnalysisAgentUltra: React.FC = () => {
   const [sessionId] = useState(`session_${Date.now()}`)
   const [messageCount, setMessageCount] = useState(0)
   const [showLimitModal, setShowLimitModal] = useState(false)
+  const [selectedModel, setSelectedModel] = useState<'GPT4.1' | 'Sonnet-4'>('GPT4.1') // AIDEV-NOTE: Model selection state for switching between GPT4.1 and Claude Sonnet 4
+  const [activeModel, setActiveModel] = useState<string | null>(null) // AIDEV-NOTE: Track which model is actually being used by backend
   
   // Refs
   const eventSourceRef = useRef<EventSource | null>(null)
@@ -223,8 +225,8 @@ const AnalysisAgentUltra: React.FC = () => {
     ])
 
     try {
-      // Connect to SSE endpoint
-      const url = `${API_URLS.ANALYSIS_AGENT}/api/chat/intelligent?message=${encodeURIComponent(userMessage.content)}&session_id=${sessionId}`
+      // Connect to SSE endpoint with model parameter - AIDEV-NOTE: Pass selected model to backend
+      const url = `${API_URLS.ANALYSIS_AGENT}/api/chat/intelligent?message=${encodeURIComponent(userMessage.content)}&session_id=${sessionId}&model=${selectedModel}`
       console.log('Connecting to SSE endpoint:', url)
       
       const eventSource = new EventSource(url)
@@ -246,7 +248,7 @@ const AnalysisAgentUltra: React.FC = () => {
       eventSource.onopen = () => {
         console.log('SSE connection opened successfully')
         setCurrentStreamingMessage('Connected. Processing your request...')
-        toast.success('Connected to Biomni', { icon: '🔗' })
+        toast.success('Connected to Analysis Agent', { icon: '🔗' })
       }
       
       // Helper to mark that we've received data
@@ -267,6 +269,19 @@ const AnalysisAgentUltra: React.FC = () => {
           
           // Route based on type field in the data
           switch(data.type) {
+            case 'model_info':
+              // AIDEV-NOTE: Handle model info event from backend showing which model is actually being used
+              setActiveModel(data.model)
+              if (data.model !== data.requested && data.requested !== 'auto') {
+                toast.warning(`Using ${data.model} (${data.requested} unavailable)`, { icon: '⚠️' })
+              }
+              setExecutionEvents(prev => [...prev, {
+                type: 'model_info',
+                content: `Using model: ${data.model}`,
+                timestamp: new Date(),
+                metadata: { model: data.model }
+              }])
+              break
             case 'planning':
               handlePlanningEvent(data)
               break
@@ -515,6 +530,7 @@ const AnalysisAgentUltra: React.FC = () => {
         eventSource.close()
         eventSourceRef.current = null
         setIsProcessing(false)
+        setActiveModel(null) // AIDEV-NOTE: Clear active model when processing completes
         updateStatusStep(7, 'completed')
         
         // Process all accumulated messages
@@ -612,6 +628,7 @@ const AnalysisAgentUltra: React.FC = () => {
       eventSourceRef.current = null
     }
     setIsProcessing(false)
+    setActiveModel(null) // AIDEV-NOTE: Clear active model when stopping
     toast('Processing stopped', { icon: '⏹️' })
   }
 
@@ -703,7 +720,7 @@ const AnalysisAgentUltra: React.FC = () => {
                     <Brain className="w-12 h-12 text-cyan-400" />
                   </div>
                   <h2 className="text-2xl font-light text-white mb-3">
-                    Welcome to Biomni Analysis Agent
+                    Welcome to Analysis Agent
                   </h2>
                   <p className="text-gray-400 max-w-md mx-auto">
                     I can help you with biomedical research, data analysis, protocol generation, and scientific computing.
@@ -852,6 +869,25 @@ const AnalysisAgentUltra: React.FC = () => {
               >
                 <Upload className="w-5 h-5" />
               </button>
+              
+              {/* Model Selector Dropdown - AIDEV-NOTE: Toggle between GPT4.1 and Claude Sonnet 4 */}
+              <div className="flex items-center space-x-2">
+                <select
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value as 'GPT4.1' | 'Sonnet-4')}
+                  className="px-3 py-2 bg-white/5 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white backdrop-blur-sm text-sm"
+                  disabled={isProcessing}
+                >
+                  <option value="GPT4.1" className="bg-gray-900 text-white">GPT 4.1</option>
+                  <option value="Sonnet-4" className="bg-gray-900 text-white">Claude Sonnet 4</option>
+                </select>
+                {activeModel && isProcessing && (
+                  <div className="flex items-center space-x-1 text-xs text-cyan-400">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                    <span>{activeModel === 'GPT4.1' ? 'GPT 4.1' : 'Claude Sonnet 4'}</span>
+                  </div>
+                )}
+              </div>
               <div className="flex-1">
                 <textarea
                   ref={textareaRef}
@@ -1134,6 +1170,7 @@ const AnalysisAgentUltra: React.FC = () => {
                   setInput('')
                   setTodos([])
                   setExecutionEvents([])
+                  setActiveModel(null) // AIDEV-NOTE: Reset active model indicator
                   toast.success('New conversation started!', { icon: '🆕' })
                 }}
                 className="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:from-cyan-600 hover:to-blue-700 transition-all duration-200"

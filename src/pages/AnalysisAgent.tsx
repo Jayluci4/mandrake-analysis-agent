@@ -1,4 +1,4 @@
-// AIDEV-NOTE: Analysis Agent (Biomni) with complete dual-panel layout and all features
+// AIDEV-NOTE: Analysis Agent with complete dual-panel layout and all features
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -89,6 +89,8 @@ export default function AnalysisAgent() {
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
   const [messageCount, setMessageCount] = useState(0)
   const [showLimitModal, setShowLimitModal] = useState(false)
+  const [selectedModel, setSelectedModel] = useState<'GPT4.1' | 'Sonnet-4'>('GPT4.1') // AIDEV-NOTE: Model selection state for switching between GPT4.1 and Claude Sonnet 4
+  const [activeModel, setActiveModel] = useState<string | null>(null) // AIDEV-NOTE: Track which model is actually being used by backend
   
   // Refs
   const eventSourceRef = useRef<EventSource | null>(null)
@@ -157,7 +159,7 @@ export default function AnalysisAgent() {
   // Initialize status steps
   const initializeStatusSteps = () => {
     setStatusSteps([
-      { icon: '🔄', text: 'Connecting to Biomni', status: 'active' },
+      { icon: '🔄', text: 'Connecting to Analysis Agent', status: 'active' },
       { icon: '📡', text: 'Connected', status: 'pending' },
       { icon: '🧠', text: 'Reasoning', status: 'pending' },
       { icon: '📝', text: 'Planning', status: 'pending' },
@@ -208,7 +210,8 @@ export default function AnalysisAgent() {
     const sessionId = `session_${Date.now()}`
     const params = new URLSearchParams({
       message: query,
-      session_id: sessionId
+      session_id: sessionId,
+      model: selectedModel // AIDEV-NOTE: Pass selected model (GPT4.1 or Sonnet-4) to backend
     })
 
     try {
@@ -268,6 +271,20 @@ export default function AnalysisAgent() {
           
           // Handle different event types
           switch(data.type) {
+            case 'model_info':
+              // AIDEV-NOTE: Handle model info event from backend showing which model is actually being used
+              setActiveModel(data.model)
+              if (data.model !== data.requested && data.requested !== 'auto') {
+                toast.warning(`Using ${data.model} (${data.requested} unavailable)`, { icon: '⚠️' })
+              }
+              setExecutionEvents(prev => [...prev, {
+                type: 'model_info',
+                content: `Using model: ${data.model}`,
+                timestamp: new Date(),
+                status: 'completed'
+              }])
+              break
+              
             case 'reasoning':
               updateStatusStep(2, 'active')
               setCurrentStreamingMessage(prev => prev + (data.content || '') + '\n')
@@ -592,6 +609,7 @@ export default function AnalysisAgent() {
         setIsProcessing(false)
         setCurrentThinking('')
         setActiveToolCall(null)
+        setActiveModel(null) // AIDEV-NOTE: Clear active model when processing ends
         
         // Combine all accumulated messages and current streaming message
         const allContent = [...accumulatedMessages, currentStreamingMessage].join('\n')
@@ -682,7 +700,7 @@ export default function AnalysisAgent() {
       console.error('Failed to connect:', err)
       setIsProcessing(false)
     }
-  }, [generatedImages, messages, todos, currentStreamingMessage, accumulatedMessages])
+  }, [generatedImages, messages, todos, currentStreamingMessage, accumulatedMessages, selectedModel])
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
@@ -735,6 +753,7 @@ export default function AnalysisAgent() {
       setExecutionEvents([])
       setMessageCount(0)
       setShowLimitModal(false)
+      setActiveModel(null) // AIDEV-NOTE: Reset active model indicator
       toast.success('New chat started')
     },
     onFocusInput: () => {
@@ -751,6 +770,7 @@ export default function AnalysisAgent() {
       setInput('')
       setMessageCount(0)
       setShowLimitModal(false)
+      setActiveModel(null) // AIDEV-NOTE: Reset active model indicator
       toast.success('Chat cleared')
     }
   })
@@ -861,6 +881,7 @@ export default function AnalysisAgent() {
                   setAccumulatedMessages([])
                   setMessageCount(0)
                   setShowLimitModal(false)
+                  setActiveModel(null) // AIDEV-NOTE: Reset active model indicator
                   toast.success('New research started', { icon: '🔬' })
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white rounded-full transition-all"
@@ -944,6 +965,7 @@ export default function AnalysisAgent() {
                       setAccumulatedMessages([])
                       setMessageCount(0)
                       setShowLimitModal(false)
+                      setActiveModel(null) // AIDEV-NOTE: Reset active model indicator
                       toast.success('New research started!', { icon: '✨' })
                     }}
                     className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
@@ -1288,6 +1310,25 @@ export default function AnalysisAgent() {
               )}
               
               <div className="flex space-x-3">
+                {/* Model Selector Dropdown - AIDEV-NOTE: Toggle between GPT4.1 and Claude Sonnet 4 */}
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value as 'GPT4.1' | 'Sonnet-4')}
+                    className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white backdrop-blur-sm text-sm"
+                    disabled={isProcessing}
+                  >
+                    <option value="GPT4.1" className="bg-gray-900 text-white">GPT 4.1</option>
+                    <option value="Sonnet-4" className="bg-gray-900 text-white">Claude Sonnet 4</option>
+                  </select>
+                  {activeModel && isProcessing && (
+                    <div className="flex items-center space-x-1 text-xs text-cyan-400">
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                      <span>{activeModel === 'GPT4.1' ? 'GPT 4.1' : 'Claude Sonnet 4'}</span>
+                    </div>
+                  )}
+                </div>
+                
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}

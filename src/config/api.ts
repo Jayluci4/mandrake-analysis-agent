@@ -3,8 +3,8 @@
 
 // Backend URLs - always use production URLs unless overridden by env vars
 export const API_URLS = {
-  // Analysis Agent (Biomni) backend - CONFIRMED WORKING
-  ANALYSIS_AGENT: import.meta.env.VITE_BIOMNI_API_URL || 'https://web-production-6cd4.up.railway.app',
+  // Analysis Agent backend - CONFIRMED WORKING
+  ANALYSIS_AGENT: import.meta.env.VITE_ANALYSIS_API_URL || 'https://web-production-6cd4.up.railway.app',
   
   // Research Agent backend - CONFIRMED WORKING
   RESEARCH_AGENT: import.meta.env.VITE_RESEARCH_API_URL || 'https://web-production-40da3.up.railway.app'

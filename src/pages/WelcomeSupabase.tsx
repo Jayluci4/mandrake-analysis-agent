@@ -1,29 +1,19 @@
-// AIDEV-NOTE: Welcome page with MandrakeBio-inspired design
+// AIDEV-NOTE: Welcome page updated for Supabase authentication
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Brain, FlaskConical, ArrowRight, Sparkles, Microscope, Dna, LogOut, ChevronRight, Beaker, Activity } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
+import { Brain, FlaskConical, ArrowRight, Sparkles, Microscope, Dna, ChevronRight } from 'lucide-react'
+import { useState } from 'react'
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext'
 import toast from 'react-hot-toast'
 
-export function Welcome() {
+export function WelcomeSupabase() {
   const navigate = useNavigate()
-  const { logout } = useAuth()
-  const [user, setUser] = useState<any>(null)
+  const { user, signOut } = useSupabaseAuth()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
-  useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem('bioagent_user')
-    if (userData) {
-      setUser(JSON.parse(userData))
-    }
-  }, [])
-
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await signOut()
     toast.success('Logged out successfully')
-    window.location.reload()
   }
   
   const handleAgentSelect = (path: string, agentName: string) => {
@@ -172,8 +162,8 @@ export function Welcome() {
           </h1>
           
           <p className="text-xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed">
-            Accelerate discovery, analyze complex data, and unlock new insights in biomedicine 
-            with our specialized AI agents.
+            {user ? `Welcome back, ${user.name}!` : 'Welcome!'} Choose your specialized AI agent to accelerate discovery, 
+            analyze complex data, and unlock new insights in biomedicine.
           </p>
         </motion.div>
 
@@ -190,14 +180,14 @@ export function Welcome() {
               onHoverEnd={() => setHoveredCard(null)}
               className="relative group"
             >
-              {/* Gradient border effect - reduced intensity */}
+              {/* Gradient border effect */}
               <div className={`absolute inset-0 bg-gradient-to-r ${agent.borderGradient} rounded-2xl opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500`} />
               
               <button
                 onClick={() => handleAgentSelect(agent.path, agent.title)}
                 className="relative w-full p-8 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-500 text-left overflow-hidden"
               >
-                {/* Background gradient - reduced opacity */}
+                {/* Background gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${agent.gradient} opacity-0 group-hover:opacity-50 transition-opacity duration-500`} />
                 
                 {/* Content */}
@@ -245,34 +235,14 @@ export function Welcome() {
           ))}
         </div>
 
-
-        {/* Floating elements for visual interest */}
+        {/* Floating elements */}
         <div className="absolute top-20 left-10 opacity-20">
           <Dna className="w-20 h-20 text-cyan-400 animate-pulse" />
         </div>
         <div className="absolute bottom-20 right-10 opacity-20">
           <Microscope className="w-24 h-24 text-teal-400 animate-pulse" />
         </div>
-        <div className="absolute top-40 right-20 opacity-20">
-          <Activity className="w-16 h-16 text-blue-400 animate-pulse" />
-        </div>
       </div>
-
-      {/* Footer */}
-      <motion.footer 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-0 w-full border-t border-white/10 bg-black/20 backdrop-blur-md"
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-            <span>Building from India</span>
-            <span className="text-lg">🇮🇳</span>
-            <span>for the world</span>
-          </div>
-        </div>
-      </motion.footer>
     </div>
   )
 }
