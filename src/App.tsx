@@ -10,7 +10,7 @@ import { LoginScreen } from './components/auth/LoginScreen'
 import { GOOGLE_CLIENT_ID } from './config/auth'
 import { lazy, Suspense } from 'react'
 
-// Lazy load the Analysis Agent (Biomni) component
+// Lazy load the Analysis Agent component
 const AnalysisAgent = lazy(() => import('./pages/AnalysisAgent'))
 const AnalysisAgentUltra = lazy(() => import('./pages/AnalysisAgentUltra'))
 
@@ -39,7 +39,7 @@ function AppContent() {
       {/* Welcome/Landing page */}
       <Route path="/" element={<Welcome />} />
       
-      {/* Analysis Agent (Biomni) Routes */}
+      {/* Analysis Agent Routes */}
       <Route path="/analysis" element={
         <Suspense fallback={<LoadingFallback />}>
           <AnalysisAgentUltra />

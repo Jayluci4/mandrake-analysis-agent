@@ -1,9 +1,9 @@
+// AIDEV-NOTE: Test main file for Supabase auth integration
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-// import App from './App'
-import AppSupabase from './AppSupabase' // AIDEV-NOTE: Testing Supabase auth integration
+import AppSupabase from './AppSupabase'
 import './styles/globals.css'
 
 const queryClient = new QueryClient({

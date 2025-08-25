@@ -25,7 +25,7 @@ export const ImageDisplay: React.FC<ImageDisplayProps> = ({ images, title }) => 
         .then(blob => {
           const url = URL.createObjectURL(blob)
           link.href = url
-          link.download = `biomni-plot-${index + 1}.png`
+          link.download = `analysis-plot-${index + 1}.png`
           link.click()
           URL.revokeObjectURL(url)
         })
@@ -35,7 +35,7 @@ export const ImageDisplay: React.FC<ImageDisplayProps> = ({ images, title }) => 
       link.href = `data:image/png;base64,${image}`
     }
     
-    link.download = `biomni-plot-${index + 1}.png`
+    link.download = `analysis-plot-${index + 1}.png`
     link.click()
   }
 
