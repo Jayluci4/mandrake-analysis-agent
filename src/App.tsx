@@ -11,6 +11,8 @@ import { lazy, Suspense } from 'react'
 // Lazy load the Analysis Agent component
 const AnalysisAgent = lazy(() => import('./pages/AnalysisAgent'))
 const AnalysisAgentUltra = lazy(() => import('./pages/AnalysisAgentUltra'))
+const AdminMetrics = lazy(() => import('./pages/AdminMetrics'))
+const PublicMetrics = lazy(() => import('./pages/PublicMetrics'))
 
 // Loading component for Suspense
 const LoadingFallback = () => (
@@ -28,6 +30,20 @@ function AppContent() {
   // Show loading spinner while checking auth state
   if (loading) {
     return <LoadingFallback />
+  }
+
+  // AIDEV-NOTE: Public routes that don't require authentication
+  // Check for public metrics route first
+  if (window.location.pathname === '/metrics') {
+    return (
+      <Routes>
+        <Route path="/metrics" element={
+          <Suspense fallback={<LoadingFallback />}>
+            <PublicMetrics />
+          </Suspense>
+        } />
+      </Routes>
+    )
   }
 
   // Show login screen if not authenticated
@@ -53,6 +69,13 @@ function AppContent() {
       <Route path="/analysis-old" element={
         <Suspense fallback={<LoadingFallback />}>
           <AnalysisAgent />
+        </Suspense>
+      } />
+      
+      {/* Admin Metrics Dashboard */}
+      <Route path="/admin" element={
+        <Suspense fallback={<LoadingFallback />}>
+          <AdminMetrics />
         </Suspense>
       } />
       
