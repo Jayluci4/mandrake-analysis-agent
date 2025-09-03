@@ -12,9 +12,11 @@ import { SearchResult, Paper } from '@/types'
 import { useConversation } from '@/contexts/ConversationContext'
 import { 
   SavedConversation, 
-  saveConversation, 
+  saveConversation as saveToSupabase, 
   createConversationMetadata 
-} from '@/lib/conversationStorage'
+} from '@/lib/supabaseStorage'
+import { sessionManager } from '@/lib/sessionManager'
+import { errorTracker } from '@/lib/errorTracker'
 
 export interface Message {
   id: string
@@ -114,12 +116,25 @@ export const ConversationInterface = React.forwardRef<ConversationInterfaceRef>(
   // Only saves if there are messages and we have a conversation ID
   useEffect(() => {
     if (messages.length > 0 && conversationId) {
-      const metadata = createConversationMetadata(messages)
+      const currentSessionId = sessionManager.getCurrentSessionId()
+      const metadata = createConversationMetadata(messages, 'research', undefined) // Research agent
       const savedConversation: SavedConversation = {
-        metadata: { ...metadata, id: conversationId },
+        metadata: { 
+          ...metadata, 
+          id: conversationId,
+          sessionId: currentSessionId || undefined
+        },
         messages
       }
-      saveConversation(savedConversation)
+      
+      // Save to Supabase with error handling
+      saveToSupabase(savedConversation).catch(error => {
+        console.error('Failed to save conversation:', error)
+        errorTracker.logError('database', 'Failed to save conversation', {
+          conversationId,
+          sessionId: currentSessionId
+        }, error)
+      })
     }
   }, [messages, conversationId])
 

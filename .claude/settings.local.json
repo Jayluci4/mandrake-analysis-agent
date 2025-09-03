@@ -32,7 +32,8 @@
       "Bash(npm:*)",
       "Bash(git rm:*)",
       "Bash(start http://localhost:3000)",
-      "Read(/C:\\Users\\tanay\\Desktop\\Biomni Comprehensive\\Biomni-backend\\Biomni-main/**)"
+      "Read(/C:\\Users\\tanay\\Desktop\\Biomni Comprehensive\\Biomni-backend\\Biomni-main/**)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "additionalDirectories": [

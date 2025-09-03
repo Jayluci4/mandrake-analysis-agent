@@ -20,6 +20,8 @@ import { sseParser } from '../services/intelligentSSEParser'
 import { ImageDisplay } from '../components/ImageDisplay'
 import { API_URLS } from '../config/api'
 import { generateMultiplePlots } from '../services/mockImageGenerator'
+import { sessionManager, type ModelType } from '../lib/sessionManager'
+import { errorTracker } from '../lib/errorTracker'
 
 // Types
 interface Message {
@@ -89,8 +91,9 @@ export default function AnalysisAgent() {
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
   const [messageCount, setMessageCount] = useState(0)
   const [showLimitModal, setShowLimitModal] = useState(false)
-  const [selectedModel, setSelectedModel] = useState<'GPT4.1' | 'Sonnet-4'>('GPT4.1') // AIDEV-NOTE: Model selection state for switching between GPT4.1 and Claude Sonnet 4
+  const [selectedModel, setSelectedModel] = useState<ModelType>('GPT4.1') // AIDEV-NOTE: Model selection state for switching between GPT4.1 and Claude Sonnet 4
   const [activeModel, setActiveModel] = useState<string | null>(null) // AIDEV-NOTE: Track which model is actually being used by backend
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   
   // Refs
   const eventSourceRef = useRef<EventSource | null>(null)
@@ -111,7 +114,29 @@ export default function AnalysisAgent() {
     if (isDark) {
       document.documentElement.classList.add('dark')
     }
+
+    // Initialize session
+    initializeSession()
   }, [])
+
+  // Initialize or continue session
+  const initializeSession = async () => {
+    try {
+      // Check if we need a new session
+      if (sessionManager.needsNewSession(selectedModel, 'analysis')) {
+        const sessionId = await sessionManager.startNewSession(selectedModel, 'analysis')
+        setCurrentSessionId(sessionId)
+        console.log('Started new session:', sessionId)
+      } else {
+        const existingSession = sessionManager.getCurrentSessionId()
+        setCurrentSessionId(existingSession)
+        console.log('Continuing existing session:', existingSession)
+      }
+    } catch (error) {
+      console.error('Failed to initialize session:', error)
+      await errorTracker.logError('session', 'Failed to initialize session', {}, error)
+    }
+  }
 
   // Auto-scroll
   useEffect(() => {
@@ -655,6 +680,8 @@ export default function AnalysisAgent() {
             const hasSolution = prev.some(msg => msg.solution === solution)
             if (!hasSolution) {
               console.log('Adding final protocol to messages')
+              // Track assistant message
+              sessionManager.trackAssistantMessage()
               return [...prev, finalMessage]
             }
             return prev
@@ -681,17 +708,30 @@ export default function AnalysisAgent() {
       eventSource.addEventListener('ping', () => {})
       
       // Handle errors
-      eventSource.onerror = () => {
+      eventSource.onerror = async (error) => {
         if (eventSource.readyState !== EventSource.CLOSED) {
           eventSource.close()
         }
         eventSourceRef.current = null
         setIsProcessing(false)
         
+        // Track the error
+        await errorTracker.logAPIError(
+          `${API_URLS.ANALYSIS_AGENT}/api/chat/intelligent`,
+          0,
+          'EventSource connection error',
+          query
+        )
+        
+        // Track error in session
+        if (currentSessionId) {
+          await sessionManager.trackError(error)
+        }
+        
         setMessages(prev => [...prev, {
           id: `msg-${Date.now()}`,
           role: 'assistant',
-          content: 'Connection error. Please ensure the backend server is running on port 8003.',
+          content: 'Connection error. Please ensure the backend server is running.',
           timestamp: new Date()
         }])
       }
@@ -702,7 +742,7 @@ export default function AnalysisAgent() {
     }
   }, [generatedImages, messages, todos, currentStreamingMessage, accumulatedMessages, selectedModel])
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault()
     if (!input.trim() || isProcessing) return
 
@@ -710,6 +750,22 @@ export default function AnalysisAgent() {
     if (messageCount >= 5) {
       setShowLimitModal(true)
       return
+    }
+
+    // Ensure session is initialized
+    if (!currentSessionId) {
+      await initializeSession()
+    }
+
+    // Track user message in session
+    try {
+      const messageMetrics = await sessionManager.trackUserMessage(input)
+      console.log('Message tracked:', messageMetrics)
+    } catch (error) {
+      console.error('Failed to track message:', error)
+      await errorTracker.logError('tracking', 'Failed to track user message', {
+        sessionId: currentSessionId
+      }, error)
     }
 
     const userMessage: Message = {
@@ -1314,7 +1370,25 @@ export default function AnalysisAgent() {
                 <div className="flex items-center space-x-2">
                   <select
                     value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value as 'GPT4.1' | 'Sonnet-4')}
+                    onChange={async (e) => {
+                      const newModel = e.target.value as ModelType
+                      const oldModel = selectedModel
+                      setSelectedModel(newModel)
+                      
+                      // Track model switch and start new session
+                      if (oldModel !== newModel && currentSessionId) {
+                        try {
+                          const newSessionId = await sessionManager.onModelSwitch(newModel)
+                          setCurrentSessionId(newSessionId)
+                          console.log('Model switched, new session:', newSessionId)
+                        } catch (error) {
+                          console.error('Failed to switch model:', error)
+                          await errorTracker.logError('model', `Failed to switch model from ${oldModel} to ${newModel}`, { 
+                            model: newModel
+                          }, error)
+                        }
+                      }
+                    }}
                     className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white backdrop-blur-sm text-sm"
                     disabled={isProcessing}
                   >

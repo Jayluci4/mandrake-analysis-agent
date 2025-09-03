@@ -1,11 +1,17 @@
 // AIDEV-NOTE: Conversation history list component for the sidebar
 // Shows all saved conversations with preview and allows loading past conversations
+// Updated to use Supabase for persistent storage
 
 import React, { useState, useEffect } from 'react'
-import { MessageSquare, Trash2, Clock } from 'lucide-react'
+import { MessageSquare, Trash2, Clock, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { SavedConversation, getSavedConversations, deleteConversation } from '@/lib/conversationStorage'
+import { 
+  SavedConversation, 
+  getSavedConversations as getFromSupabase, 
+  deleteConversation as deleteFromSupabase 
+} from '@/lib/supabaseStorage'
 import { formatDistanceToNow } from 'date-fns'
+import { errorTracker } from '@/lib/errorTracker'
 
 interface ConversationHistoryProps {
   onSelectConversation: (conversation: SavedConversation) => void
@@ -15,33 +21,71 @@ interface ConversationHistoryProps {
 export function ConversationHistory({ onSelectConversation, currentConversationId }: ConversationHistoryProps) {
   const [conversations, setConversations] = useState<SavedConversation[]>([])
   const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Load conversations on mount and set up storage event listener
+  // Load conversations on mount
   useEffect(() => {
     loadConversations()
-
-    // Listen for storage changes from other tabs
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'bioagent_conversations') {
-        loadConversations()
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
+    
+    // Set up interval to refresh conversations every 30 seconds
+    const intervalId = setInterval(loadConversations, 30000)
+    
+    return () => clearInterval(intervalId)
   }, [])
 
-  const loadConversations = () => {
-    const saved = getSavedConversations()
-    setConversations(saved)
+  const loadConversations = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const saved = await getFromSupabase()
+      setConversations(saved)
+    } catch (error) {
+      console.error('Failed to load conversations:', error)
+      setError('Failed to load conversations')
+      await errorTracker.logError('database', 'Failed to load conversations', {}, error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleDelete = (e: React.MouseEvent, conversationId: string) => {
+  const handleDelete = async (e: React.MouseEvent, conversationId: string) => {
     e.stopPropagation() // Prevent selecting the conversation
     if (window.confirm('Delete this conversation?')) {
-      deleteConversation(conversationId)
-      loadConversations()
+      try {
+        await deleteFromSupabase(conversationId)
+        await loadConversations() // Reload after deletion
+      } catch (error) {
+        console.error('Failed to delete conversation:', error)
+        await errorTracker.logError('database', 'Failed to delete conversation', {
+          conversationId
+        }, error)
+      }
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="px-4 py-8 text-center">
+        <Loader2 className="w-8 h-8 mx-auto mb-2 text-text-tertiary animate-spin" />
+        <p className="text-sm text-text-tertiary">Loading conversations...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="px-4 py-8 text-center">
+        <MessageSquare className="w-8 h-8 mx-auto mb-2 text-red-400" />
+        <p className="text-sm text-red-400">Failed to load conversations</p>
+        <button 
+          onClick={loadConversations}
+          className="text-xs text-brand-400 mt-2 hover:underline"
+        >
+          Try again
+        </button>
+      </div>
+    )
   }
 
   if (conversations.length === 0) {
