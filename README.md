@@ -1,164 +1,237 @@
-# BioAgent Frontend
+# Mandrake Analysis Agent
 
-A beautiful, modern frontend for the AI Co-Scientist system built with React, TypeScript, and Tailwind CSS.
+A powerful biomedical AI analysis agent with Google OAuth authentication, built with React, TypeScript, and integrated with the Biomni backend.
 
 ## Features
 
-- 🧬 Beautiful dark theme optimized for scientific research
-- 🔬 Real-time search with WebSocket updates
-- 📚 Elegant paper display with expandable abstracts
-- 🎨 Glass-morphism design with smooth animations
-- 🚀 Fast and responsive with Vite
-- 📱 Fully responsive design
+### 🔐 Authentication
+- Google OAuth 2.0 integration for secure access
+- Profile photo rendering with fallback mechanisms
+- Session persistence with localStorage
 
-## Getting Started
+### 🧬 Biomedical Analysis
+- Real-time AI-powered biomedical analysis
+- Integration with Biomni backend for advanced research capabilities
+- Support for multiple AI models (GPT-4, Claude Sonnet 4)
+
+### 📁 File Management
+- Upload and manage biomedical data files
+- Support for various formats (FASTA, FASTQ, PDB, etc.)
+- S3 integration for file storage
+
+### 💬 Conversation Interface
+- Real-time chat with AI agent
+- Conversation history with search functionality
+- Todo list and execution log tracking
+- Glass morphism UI design
+
+### 🔬 Specialized Services
+- Drug discovery analysis
+- Literature intelligence
+- Protein structure analysis
+- Research intelligence
+
+## Tech Stack
+
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for fast builds
+- **Tailwind CSS** for styling
+- **Framer Motion** for animations
+- **@react-oauth/google** for Google authentication
+
+### Backend
+- **Python** with FastAPI/Flask
+- **SSE (Server-Sent Events)** for real-time communication
+- **SQLite** for conversation storage
+- **AWS S3** for file storage
+- **Biomni** integration for AI analysis
+
+## Setup
 
 ### Prerequisites
+- Node.js 18+ and npm
+- Python 3.10+
+- Google Cloud Console project with OAuth 2.0 credentials
+- AWS credentials (for S3 file storage)
 
-- Node.js 18+ 
-- npm or yarn
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Google OAuth
+VITE_GOOGLE_CLIENT_ID=your-google-client-id
+
+# Backend URLs
+VITE_ANALYSIS_API_URL=http://localhost:8000
+VITE_BIOMNI_API_URL=http://localhost:8000
+
+# Optional - Development
+VITE_DEV_MODE=true
+```
+
+Create a `backend/.env` file:
+
+```env
+# Azure OpenAI (Primary)
+AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_ENDPOINT=your-endpoint
+AZURE_OPENAI_API_VERSION=2024-08-01-preview
+
+# AWS Bedrock (Fallback)
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_BEDROCK_REGION=us-east-1
+
+# S3 Configuration
+MY_S3_BUCKET_NAME=your-bucket
+MY_S3_BUCKET_URL=your-bucket-url
+
+# Biomni Configuration
+BIOMNI_LLM=azure-gpt-4.1
+BIOMNI_SOURCE=AzureOpenAI
+BIOMNI_FALLBACK_LLM=us.anthropic.claude-sonnet-4-20250514-v1:0
+BIOMNI_FALLBACK_SOURCE=Bedrock
+```
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
-git clone <repository-url>
-cd BioAgentFrontend
+git clone https://github.com/Jayluci4/mandrake-analysis-agent.git
+cd mandrake-analysis-agent
 ```
 
-2. Install dependencies:
+2. **Install frontend dependencies:**
 ```bash
 npm install
 ```
 
-3. Create a `.env` file based on `.env.example`:
+3. **Install backend dependencies:**
 ```bash
-cp .env.example .env
+cd backend
+pip install -r requirements.txt
 ```
 
-4. Update the `.env` file with your backend URL:
-```env
-VITE_API_URL=http://localhost:8000
-VITE_WS_URL=ws://localhost:8000/ws
+### Running the Application
+
+1. **Start the backend server:**
+```bash
+cd backend
+python server.py
 ```
+The backend will run on http://localhost:8000
 
-### Development
-
-Run the development server:
+2. **Start the frontend development server:**
 ```bash
 npm run dev
 ```
+The frontend will run on http://localhost:3000
 
-The app will be available at `http://localhost:6000`
+3. **Access the application:**
+Open http://localhost:3000 in your browser
 
-### Building for Production
+## Google OAuth Setup
 
-1. Build the project:
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized JavaScript origins:
+   - http://localhost:3000
+   - http://localhost:3001
+   - http://localhost:3002
+   - Your production domain
+
+## Project Structure
+
+```
+mandrake-analysis-agent/
+├── src/                    # Frontend source code
+│   ├── components/         # React components
+│   ├── context/           # Context providers (Google Auth)
+│   ├── hooks/             # Custom React hooks
+│   ├── pages/             # Page components
+│   └── App.tsx            # Main application component
+├── backend/               # Backend server code
+│   ├── server.py          # Main server
+│   ├── bridge_server.py   # Biomni bridge
+│   └── ...               # Other service modules
+├── public/                # Static assets
+├── package.json           # Frontend dependencies
+└── vite.config.ts        # Vite configuration
+```
+
+## Key Components
+
+### Frontend
+- **MandrakeAnalysisAgent.tsx**: Main analysis agent page
+- **GoogleAuthContext.tsx**: Google OAuth context provider
+- **GoogleLogin.tsx**: Login button with profile display
+- **FileManager.tsx**: File upload and management
+- **ConversationHistory.tsx**: Chat history display
+- **MessageBubble.tsx**: Message rendering component
+
+### Backend
+- **server.py**: Main backend server with SSE endpoints
+- **drug_discovery_api.py**: Drug discovery analysis endpoints
+- **literature_intelligence.py**: Literature search and analysis
+- **protein_structure_service.py**: Protein structure analysis
+- **s3_file_service.py**: S3 file management
+
+## Testing
+
+### OAuth Test Page
+Navigate to `/test-auth` to access the Google OAuth debugging page:
+- Test authentication flow
+- Run diagnostics
+- View troubleshooting guide
+
+## Deployment
+
+### Frontend (Vercel/Netlify)
 ```bash
 npm run build
 ```
+Deploy the `dist` folder to your hosting service.
 
-2. Preview the production build:
-```bash
-npm run preview
-```
+### Backend (Cloud Run/EC2)
+1. Dockerize the backend application
+2. Deploy to your cloud service
+3. Update frontend environment variables with production URLs
 
-### Deployment
+## Troubleshooting
 
-The built files will be in the `dist` directory. You can deploy these to any static hosting service:
+### 403 Error on Google OAuth
+1. Check authorized JavaScript origins in Google Cloud Console
+2. Ensure the current domain is added to authorized origins
+3. Wait 5-10 minutes for changes to propagate
+4. Clear browser cache
 
-#### Vercel (Recommended)
+### Connection Errors
+1. Verify backend is running on correct port
+2. Check CORS configuration
+3. Ensure environment variables are set correctly
 
-1. **Deploy with Vercel CLI:**
-```bash
-npm i -g vercel
-vercel
-```
+## Contributing
 
-2. **Deploy via GitHub Integration:**
-   - Connect your GitHub repository to Vercel
-   - Vercel will auto-deploy on every push to main
-
-3. **Environment Variables:**
-   Set these in your Vercel project settings:
-   - `VITE_API_URL` - Your backend API URL (e.g., `https://api.yourdomain.com`)
-   - `VITE_WS_URL` - Your WebSocket URL (e.g., `wss://api.yourdomain.com/ws`)
-
-4. **The project includes `vercel.json` for optimal configuration**
-
-#### Netlify
-1. Build the project
-2. Drag and drop the `dist` folder to Netlify
-
-#### GitHub Pages
-1. Install gh-pages:
-```bash
-npm install --save-dev gh-pages
-```
-
-2. Add to package.json:
-```json
-"scripts": {
-  "deploy": "gh-pages -d dist"
-}
-```
-
-3. Deploy:
-```bash
-npm run build
-npm run deploy
-```
-
-#### Nginx Configuration
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    root /path/to/dist;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # API proxy (if backend is on different server)
-    location /api {
-        proxy_pass http://backend-server:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    # WebSocket proxy
-    location /ws {
-        proxy_pass http://backend-server:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "Upgrade";
-        proxy_set_header Host $host;
-    }
-}
-```
-
-## Environment Variables
-
-- `VITE_API_URL`: Backend API URL (default: `http://localhost:8000`)
-- `VITE_WS_URL`: WebSocket URL (default: `ws://localhost:8000/ws`)
-- `VITE_ACCESS_PIN`: 4-digit access PIN for authentication (default: `1234`)
-
-## Tech Stack
-
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **Tailwind CSS** - Styling
-- **Framer Motion** - Animations
-- **React Query** - Server state management
-- **Socket.io** - WebSocket client
-- **Zustand** - Client state management
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is proprietary and confidential.
+
+## Support
+
+For issues and questions, please open an issue on GitHub or contact the development team.
+
+## Acknowledgments
+
+- Built with [Biomni](https://github.com/snap-stanford/Biomni) for biomedical AI capabilities
+- Uses Google OAuth for secure authentication
+- Powered by GPT-4 and Claude Sonnet models
