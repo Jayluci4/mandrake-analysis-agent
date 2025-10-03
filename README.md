@@ -1,6 +1,6 @@
 # Mandrake Analysis Agent
 
-A powerful biomedical AI analysis agent with Google OAuth authentication, built with React, TypeScript, and integrated with the Biomni backend.
+A powerful biomedical AI analysis agent with Google OAuth authentication, built with React, TypeScript, and integrated with advanced AI backend services.
 
 ## Features
 
@@ -11,7 +11,7 @@ A powerful biomedical AI analysis agent with Google OAuth authentication, built 
 
 ### 🧬 Biomedical Analysis
 - Real-time AI-powered biomedical analysis
-- Integration with Biomni backend for advanced research capabilities
+- Integration with advanced backend for research capabilities
 - Support for multiple AI models (GPT-4, Claude Sonnet 4)
 
 ### 📁 File Management
@@ -45,7 +45,7 @@ A powerful biomedical AI analysis agent with Google OAuth authentication, built 
 - **SSE (Server-Sent Events)** for real-time communication
 - **SQLite** for conversation storage
 - **AWS S3** for file storage
-- **Biomni** integration for AI analysis
+- **Mandrake Analysis Engine** for AI analysis
 
 ## Setup
 
@@ -65,7 +65,7 @@ VITE_GOOGLE_CLIENT_ID=your-google-client-id
 
 # Backend URLs
 VITE_ANALYSIS_API_URL=http://localhost:8000
-VITE_BIOMNI_API_URL=http://localhost:8000
+VITE_MANDRAKE_API_URL=http://localhost:8000
 
 # Optional - Development
 VITE_DEV_MODE=true
@@ -88,11 +88,11 @@ AWS_BEDROCK_REGION=us-east-1
 MY_S3_BUCKET_NAME=your-bucket
 MY_S3_BUCKET_URL=your-bucket-url
 
-# Biomni Configuration
-BIOMNI_LLM=azure-gpt-4.1
-BIOMNI_SOURCE=AzureOpenAI
-BIOMNI_FALLBACK_LLM=us.anthropic.claude-sonnet-4-20250514-v1:0
-BIOMNI_FALLBACK_SOURCE=Bedrock
+# Mandrake Configuration
+MANDRAKE_LLM=azure-gpt-4.1
+MANDRAKE_SOURCE=AzureOpenAI
+MANDRAKE_FALLBACK_LLM=us.anthropic.claude-sonnet-4-20250514-v1:0
+MANDRAKE_FALLBACK_SOURCE=Bedrock
 ```
 
 ### Installation
@@ -156,7 +156,7 @@ mandrake-analysis-agent/
 │   └── App.tsx            # Main application component
 ├── backend/               # Backend server code
 │   ├── server.py          # Main server
-│   ├── bridge_server.py   # Biomni bridge
+│   ├── bridge_server.py   # AI service bridge
 │   └── ...               # Other service modules
 ├── public/                # Static assets
 ├── package.json           # Frontend dependencies
@@ -232,6 +232,6 @@ For issues and questions, please open an issue on GitHub or contact the developm
 
 ## Acknowledgments
 
-- Built with [Biomni](https://github.com/snap-stanford/Biomni) for biomedical AI capabilities
+- Powered by advanced AI models including GPT-4 and Claude Sonnet
 - Uses Google OAuth for secure authentication
-- Powered by GPT-4 and Claude Sonnet models
+- Built with cutting-edge biomedical analysis capabilities
