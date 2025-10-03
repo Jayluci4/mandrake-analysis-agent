@@ -155,8 +155,7 @@ mandrake-analysis-agent/
 │   ├── pages/             # Page components
 │   └── App.tsx            # Main application component
 ├── backend/               # Backend server code
-│   ├── server.py          # Main server
-│   ├── bridge_server.py   # AI service bridge
+│   ├── server.py          # Main server with SSE endpoints
 │   └── ...               # Other service modules
 ├── public/                # Static assets
 ├── package.json           # Frontend dependencies
