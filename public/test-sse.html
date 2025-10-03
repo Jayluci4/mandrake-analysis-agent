@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Biomni SSE Connection Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+        .event { margin: 10px 0; padding: 10px; background: #333; border-radius: 5px; }
+        .connected { background: #004d40; }
+        .tool_call { background: #1b5e20; }
+        .observation { background: #4a148c; }
+        .planning { background: #01579b; }
+        .error { background: #d32f2f; }
+        button { padding: 10px 20px; margin: 5px; background: #00bcd4; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:disabled { background: #666; cursor: not-allowed; }
+        #status { font-weight: bold; margin-bottom: 20px; }
+        #logs { max-height: 400px; overflow-y: auto; border: 1px solid #555; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🧬 Biomni SSE Connection Test</h1>
+    <div id="status">Status: Disconnected</div>
+    
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="sendMessage()">Send Test Message</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+    
+    <h3>Connection Logs:</h3>
+    <div id="logs"></div>
+    
+    <script>
+        let eventSource = null;
+        let eventCount = 0;
+        
+        function log(message, className = '') {
+            const logs = document.getElementById('logs');
+            const div = document.createElement('div');
+            div.className = `event ${className}`;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        function updateStatus(status) {
+            document.getElementById('status').textContent = `Status: ${status}`;
+        }
+        
+        function testConnection() {
+            log('🔍 Testing SSE connection to Biomni bridge...', 'info');
+            
+            const url = 'http://35.223.254.208:8000/api/chat/intelligent?message=connection%20test&session_id=sse_test&model=GPT4.1';
+            log(`📡 URL: ${url}`, 'info');
+            
+            try {
+                eventSource = new EventSource(url);
+                updateStatus('Connecting...');
+                
+                eventSource.onopen = function(event) {
+                    log('🎉 SSE connection opened successfully!', 'connected');
+                    updateStatus('Connected');
+                };
+                
+                eventSource.onmessage = function(event) {
+                    eventCount++;
+                    try {
+                        const data = JSON.parse(event.data);
+                        log(`📨 Event ${eventCount}: ${data.type}`, data.type);
+                        
+                        if (data.type === 'tool_call') {
+                            log(`   ⚙️ Code: ${(data.code || '').substring(0, 50)}...`, 'tool_call');
+                            if (data.metadata) {
+                                log(`   📊 Metadata: ${JSON.stringify(data.metadata)}`, 'tool_call');
+                            }
+                        } else if (data.type === 'observation') {
+                            log(`   👁️ Content: ${(data.content || '').substring(0, 50)}...`, 'observation');
+                        } else if (data.type === 'planning') {
+                            log(`   📋 Planning: ${data.steps ? data.steps.length : 0} steps`, 'planning');
+                        } else if (data.type === 'final_answer') {
+                            log(`   🎯 Solution: ${(data.content || '').substring(0, 50)}...`, 'planning');
+                        } else {
+                            log(`   📝 Data: ${JSON.stringify(data).substring(0, 100)}...`);
+                        }
+                        
+                    } catch (e) {
+                        log(`❌ JSON parse error: ${e.message}`, 'error');
+                        log(`   Raw data: ${event.data}`, 'error');
+                    }
+                };
+                
+                eventSource.onerror = function(event) {
+                    log(`❌ SSE connection error: ${JSON.stringify(event)}`, 'error');
+                    updateStatus('Error');
+                    
+                    if (eventSource.readyState === EventSource.CLOSED) {
+                        log('🔌 Connection closed by server', 'error');
+                    } else if (eventSource.readyState === EventSource.CONNECTING) {
+                        log('🔄 Attempting to reconnect...', 'info');
+                    }
+                };
+                
+            } catch (e) {
+                log(`💥 Failed to create EventSource: ${e.message}`, 'error');
+                updateStatus('Failed');
+            }
+        }
+        
+        function sendMessage() {
+            if (eventSource && eventSource.readyState === EventSource.OPEN) {
+                log('ℹ️ EventSource is already active. Close current connection first.', 'info');
+                return;
+            }
+            
+            testConnection();
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+            eventCount = 0;
+        }
+        
+        function stopConnection() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+                updateStatus('Disconnected');
+                log('🛑 Connection stopped manually', 'info');
+            }
+        }
+        
+        // Add stop button
+        document.body.insertAdjacentHTML('beforeend', '<button onclick="stopConnection()">Stop Connection</button>');
+        
+        // Auto-test on page load
+        setTimeout(() => {
+            log('🚀 Auto-testing SSE connection on page load...', 'info');
+            testConnection();
+        }, 1000);
+    </script>
+</body>
+</html>

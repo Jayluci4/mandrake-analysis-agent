@@ -1,18 +1,18 @@
-// AIDEV-NOTE: Unified app with Supabase authentication and routing for both agents
+// AIDEV-NOTE: Unified app with Google OAuth authentication and routing for both agents
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AppShell } from './components/layout/AppShell'
 import { Conversations, Literature, Experiments, DataSets, ConnectionTest, Welcome } from './pages'
 import { ConversationProvider } from './contexts/ConversationContext'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
-import { LoginScreen } from './components/auth/LoginScreen'
+import { GoogleAuthProvider, useGoogleAuth } from './context/GoogleAuthContext'
+import { GoogleLoginScreen } from './components/GoogleLoginScreen'
 import { lazy, Suspense } from 'react'
 
-// Lazy load the Analysis Agent component
-const AnalysisAgent = lazy(() => import('./pages/AnalysisAgent'))
-const AnalysisAgentUltra = lazy(() => import('./pages/AnalysisAgentUltra'))
+// Lazy load the Analysis Agent component// AIDEV-NOTE: Complete integration with file management
+const BiomniCompleteGlass = lazy(() => import('./pages/MandrakeAnalysisAgent')) // AIDEV-NOTE: Glass morphism design with file management
 const AdminMetrics = lazy(() => import('./pages/AdminMetrics'))
 const PublicMetrics = lazy(() => import('./pages/PublicMetrics'))
+const TestGoogleAuth = lazy(() => import('./pages/TestGoogleAuth')) // AIDEV-NOTE: Google OAuth test page
 
 // Loading component for Suspense
 const LoadingFallback = () => (
@@ -25,21 +25,26 @@ const LoadingFallback = () => (
 )
 
 function AppContent() {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, isLoading, user } = useGoogleAuth()
 
   // Show loading spinner while checking auth state
-  if (loading) {
+  if (isLoading) {
     return <LoadingFallback />
   }
 
   // AIDEV-NOTE: Public routes that don't require authentication
   // Check for public metrics route first
-  if (window.location.pathname === '/metrics') {
+  if (window.location.pathname === '/metrics' || window.location.pathname === '/test-auth') {
     return (
       <Routes>
         <Route path="/metrics" element={
           <Suspense fallback={<LoadingFallback />}>
             <PublicMetrics />
+          </Suspense>
+        } />
+        <Route path="/test-auth" element={
+          <Suspense fallback={<LoadingFallback />}>
+            <TestGoogleAuth />
           </Suspense>
         } />
       </Routes>
@@ -48,7 +53,7 @@ function AppContent() {
 
   // Show login screen if not authenticated
   if (!isAuthenticated) {
-    return <LoginScreen />
+    return <GoogleLoginScreen />
   }
 
   // AIDEV-NOTE: Unified routing for both Analysis and Research agents
@@ -58,19 +63,13 @@ function AppContent() {
       {/* Welcome/Landing page */}
       <Route path="/" element={<Welcome />} />
       
-      {/* Analysis Agent Routes */}
-      <Route path="/analysis" element={
+      {/* AIDEV-NOTE: Main Analysis Agent Route - Glass Morphism Biomni with enhanced file management and authentication */}
+      <Route path="/AnalysisAgent" element={
         <Suspense fallback={<LoadingFallback />}>
-          <AnalysisAgentUltra />
+          <BiomniCompleteGlass />
         </Suspense>
       } />
-      
-      {/* Legacy Analysis Agent Route */}
-      <Route path="/analysis-old" element={
-        <Suspense fallback={<LoadingFallback />}>
-          <AnalysisAgent />
-        </Suspense>
-      } />
+    
       
       {/* Admin Metrics Dashboard */}
       <Route path="/admin" element={
@@ -104,10 +103,10 @@ function AppContent() {
 }
 
 function App() {
-  // AIDEV-NOTE: App with Supabase authentication
+  // AIDEV-NOTE: App with Google OAuth authentication
   return (
-    <AuthProvider>
-        <Toaster 
+    <GoogleAuthProvider>
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
@@ -142,7 +141,7 @@ function App() {
           }}
         />
         <AppContent />
-      </AuthProvider>
+      </GoogleAuthProvider>
   )
 }
 

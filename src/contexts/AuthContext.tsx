@@ -35,6 +35,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const loadingRef = useRef(true)
+  
+  // AIDEV-NOTE: Development mode bypass for local testing
+  const isDevelopment = import.meta.env.VITE_DEV_MODE === 'true' || import.meta.env.MODE === 'development'
+
+  // Auto-authenticate in development mode - BYPASS ALL AUTH
+  useEffect(() => {
+    if (isDevelopment) {
+      console.log('🧪 Development mode: Auto-authenticating (bypassing Google + Supabase)...')
+      
+      // Set mock user immediately
+      const devUser = {
+        id: 'dev-user-123',
+        email: 'dev@biomni.test', 
+        name: 'Developer',
+        picture: ''
+      }
+      
+      setUser(devUser)
+      setSession({ user: devUser })
+      setLoading(false)
+      loadingRef.current = false
+      
+      console.log('✅ Development authentication complete - ready for Biomni!')
+      return
+    }
+  }, [isDevelopment])
 
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string) => {
@@ -63,7 +89,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }, 6000)
     
-    // Get the session from Supabase with a race condition against timeout
+    // Skip Supabase session check in development mode
+    if (isDevelopment) {
+      clearTimeout(failsafeTimeout)
+      setLoading(false)
+      loadingRef.current = false
+      return
+    }
+    
+    // Get the session from Supabase with a race condition against timeout (production only)
     const sessionPromise = supabase.auth.getSession()
     const timeoutPromise = new Promise((resolve) => 
       setTimeout(() => resolve({ data: { session: null }, error: new Error('Timeout') }), 5000)
@@ -98,7 +132,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loadingRef.current = false
       })
 
-    // Listen for auth changes
+    // Listen for auth changes (skip in development mode)
+    if (isDevelopment) {
+      return // Skip auth state listener in development
+    }
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       
       if (event === 'SIGNED_IN' && session) {
@@ -128,6 +166,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async () => {
+    // AIDEV-NOTE: Bypass Google login in development mode
+    if (isDevelopment) {
+      console.log('🧪 Development mode: Google login bypassed')
+      // User is already set in useEffect above
+      return
+    }
+    
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

@@ -11,24 +11,26 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',  // AIDEV-NOTE: Host on 0.0.0.0 for external access
     port: 3000,
     strictPort: false,
-    // Proxy is only used for local development
-    // In production, use environment variables to point to the actual backend
+    // AIDEV-NOTE: Proxy configuration for Biomni bridge integration
+    // Routes /api requests to local Biomni bridge server instead of Railway
     proxy: {
       '/api': {
-        target: 'https://web-production-40da3.up.railway.app',
+        target: 'http://localhost:8000',  // AIDEV-NOTE: Point to local Biomni bridge server
         changeOrigin: true,
-        secure: true,
+        secure: false,  // AIDEV-NOTE: Local HTTP, not HTTPS
         rewrite: (path) => path.replace(/^\/api/, ''),
-        timeout: 600000, // 10 minutes instead of default 2 minutes
+        timeout: 600000, // 10 minutes for long Biomni workflows
       },
+      // AIDEV-NOTE: Keep WebSocket proxy for other features if needed
       '/ws': {
-        target: 'wss://web-production-40da3.up.railway.app',
+        target: 'ws://localhost:8000',  // AIDEV-NOTE: Local WebSocket if needed
         ws: true,
         changeOrigin: true,
-        secure: true,
-        timeout: 600000, // 10 minutes
+        secure: false,
+        timeout: 600000,
       },
     },
   },

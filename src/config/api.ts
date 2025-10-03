@@ -1,13 +1,13 @@
 // AIDEV-NOTE: API configuration for backend services
 // Production URLs for Railway deployments
 
-// Backend URLs - always use production URLs unless overridden by env vars
+// Backend URLs - AIDEV-NOTE: Modified for GCP cloud Biomni bridge integration
 export const API_URLS = {
-  // Analysis Agent backend - CONFIRMED WORKING
-  ANALYSIS_AGENT: import.meta.env.VITE_ANALYSIS_API_URL || 'https://web-production-6cd4.up.railway.app',
+  // Analysis Agent backend - POINT TO EXTERNAL IP FOR CLOUD ACCESS
+  ANALYSIS_AGENT: import.meta.env.VITE_ANALYSIS_API_URL || 'http://35.223.254.208:8000',
   
-  // Research Agent backend - CONFIRMED WORKING
-  RESEARCH_AGENT: import.meta.env.VITE_RESEARCH_API_URL || 'https://web-production-40da3.up.railway.app'
+  // Research Agent backend - Use external IP for cloud access
+  RESEARCH_AGENT: import.meta.env.VITE_RESEARCH_API_URL || 'http://35.223.254.208:8000'
 }
 
 // Helper function to get the correct API URL based on agent type

@@ -26,19 +26,17 @@ export function Welcome() {
 
   const agents = [
     {
-      id: 'analysis',
-      title: 'Analysis Agent',
-      description: 'Advanced computational biology & protocol generation',
-      icon: Brain,
-      gradient: 'from-cyan-400/10 via-teal-500/10 to-blue-600/10',
-      borderGradient: 'from-cyan-400/40 via-teal-500/40 to-blue-600/40',
+      id: 'glass',
+      title: 'Mandrake Analysis Agent',
+      description: 'Step by Step query analysis • Complete file management',
+      icon: Sparkles,
+      gradient: 'from-violet-400/10 via-purple-500/10 to-fuchsia-600/10',
+      borderGradient: 'from-violet-400/40 via-purple-500/40 to-fuchsia-600/40',
       features: [
-        'Tool orchestration',
-        'Protocol generation',
-        'Data visualization',
-        'Code generation'
+        '📁 File preview & download',
+        '📤 Real-time code execution', 
       ],
-      path: '/analysis'
+      path: '/AnalysisAgent'
     },
     {
       id: 'research',

@@ -199,7 +199,7 @@ export function useIntelligentSSE() {
       session_id: sessionId
     })
     
-    const eventSource = new EventSource(`http://localhost:8003/api/chat/intelligent?${params}`)
+    const eventSource = new EventSource(`http://localhost:8000/api/chat/intelligent?${params}`)
     eventSourceRef.current = eventSource
     
     // Handle message events

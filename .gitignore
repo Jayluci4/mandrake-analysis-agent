@@ -35,3 +35,35 @@ dist-ssr
 *.tmp
 *.temp
 nul
+
+# Backend
+backend/__pycache__/
+backend/*.db
+backend/generated_files/
+backend/backups/
+backend/uploads/
+backend/*.fasta
+backend/*.fastq
+backend/*.gbk
+backend/*.pdb
+backend/*.tsv
+backend/*.png
+backend/*.csv
+backend/*.md
+backend/test_*
+
+# Data files to exclude
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.fasta
+*.fastq
+*.gbk
+*.pdb
+*.tsv

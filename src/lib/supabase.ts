@@ -5,21 +5,50 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
-// Remove console logs for production
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase credentials not found. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file')
-  throw new Error('Supabase credentials not found')
+// AIDEV-NOTE: Handle missing Supabase credentials gracefully for development
+const createSupabaseClient = () => {
+  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('placeholder')) {
+    console.warn('⚠️ Supabase credentials not configured - using mock client for development')
+    
+    // Create mock Supabase client for development
+    return {
+      auth: {
+        signInWithOAuth: async () => ({ data: null, error: new Error('Mock auth') }),
+        signOut: async () => ({ error: null }),
+        getSession: async () => ({ data: { session: null }, error: null }),
+        onAuthStateChange: (callback: any) => {
+          // Mock session change
+          setTimeout(() => callback('SIGNED_OUT', null), 100)
+          return { data: { subscription: { unsubscribe: () => {} } } }
+        }
+      },
+      from: (table: string) => ({
+        select: () => ({
+          eq: () => ({
+            single: async () => ({ data: null, error: new Error('Mock database') })
+          })
+        }),
+        insert: () => ({
+          select: () => ({
+            single: async () => ({ data: null, error: new Error('Mock database') })
+          })
+        })
+      })
+    }
+  } else {
+    // Create real Supabase client with default settings
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+        // Let Supabase use its default storage configuration
+      }
+    })
+  }
 }
 
-// Create Supabase client with default settings
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-    // Let Supabase use its default storage configuration
-  }
-})
+export const supabase = createSupabaseClient()
 
 // AIDEV-NOTE: Supabase client initialized with default auth settings for proper session persistence
 
