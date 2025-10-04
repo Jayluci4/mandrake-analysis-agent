@@ -1,0 +1,55 @@
+# Core Framework
+fastapi
+uvicorn
+python-dotenv
+
+# HTTP & Web
+aiohttp
+httpx
+requests
+sse-starlette
+
+# CORS & Middleware
+python-multipart
+
+# Database
+sqlite3
+
+# AWS & Cloud Services
+boto3
+botocore
+
+# AI & LLM Libraries
+anthropic
+openai
+azure-identity
+azure-core
+
+# Data Processing
+pandas
+numpy
+
+# Biology & Bioinformatics
+biopython
+rdkit
+py3Dmol
+
+# Async & Concurrency
+asyncio
+
+# JSON & Data Handling
+pydantic
+python-json-logger
+
+# File Handling
+aiofiles
+
+# Logging & Monitoring
+colorlog
+
+# Security
+cryptography
+
+# Utilities
+python-dateutil
+pytz
